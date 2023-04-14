@@ -1,3 +1,5 @@
+#include "keylogger.h"
+
 void begin_keylogger(void) {
   // IMPLEMENTATION HERE
 }

@@ -1,3 +1,8 @@
+#pragma once
+
+/**
+ * Represents all the associated data for one key that was pressed
+ */
 typedef struct {
   char* key;        // a string representing a key that was pressed
   char* timestamp;  // the approximate time (UTC) that the key was pressed
