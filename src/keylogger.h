@@ -10,3 +10,13 @@ typedef struct {
   char* application;  // represents the active application of the user when they
                       // pressed the key
 } key_info;
+
+/**
+ * Documentation here
+ */
+void begin_keylogger(void);
+
+/**
+ * Documentation here
+ */
+void end_keylogger(void);
