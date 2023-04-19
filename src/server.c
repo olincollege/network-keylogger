@@ -1,7 +1,5 @@
 #include "server.h"
 
-#include "server.h"
-
 void open_server(void) {
   // IMPLEMENTATION HERE
 }
