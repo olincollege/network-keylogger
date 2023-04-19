@@ -8,3 +8,10 @@
 # or similar. The PRIVATE/INTERFACE/PUBLIC keyword will depend on whether the
 # library is used only in function bodies (PRIVATE), only in function
 # signatures/types (INTERFACE), or both (PUBLIC).
+
+add_library(keylogger keylogger.c keylogger.h)
+add_library(server server.c server.h)
+
+add_executable(main main.c)
+
+target_link_libraries(main PRIVATE keylogger server)
