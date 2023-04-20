@@ -1,3 +1,6 @@
+/**
+ * Local keylogging
+ */
 #include "keylogger.h"
 
 void begin_keylogger(void) {
