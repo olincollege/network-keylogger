@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 
 # TODO: Define a good project in the line below. If applicable, list other
 # languages in this project managed by CMake.
-project(ProjectTitle
+project(NetworkKeylogger
   VERSION 1.0
   LANGUAGES C
 )
