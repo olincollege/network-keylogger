@@ -10,7 +10,6 @@
 
 #include "keylogger.h"
 
-
 /**
  * Documentation here
  */
