@@ -2,10 +2,6 @@
 Main function to run to create keylogger and virus
 */
 
-void background_process(void) {
-  // IMPLEMENTATION HERE
-}
-
 void main(void) {
   background_process();
   begin_keylogger();
