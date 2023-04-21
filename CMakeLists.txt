@@ -13,25 +13,12 @@ project(NetworkKeylogger
 # version of Ubuntu.
 set(CMAKE_C_STANDARD 17)
 
-set(CMAKE_C_FLAGS "
-  -Wall \
-  -Wextra \
-  -pedantic \
-  -Wconversion \
-  -Wdouble-promotion \
-  -Wduplicated-branches \
-  -Wduplicated-cond \
-  -Wimplicit-fallthrough \
-  -Wlogical-op \
-  -Wmisleading-indentation \
-  -Wnull-dereference \
-  -Wshadow \
-  -Wsign-conversion \
-  -Wunreachable-code \
-  -Wunused \
-  -Wuseless-cast \
-  -g \
-")
+
+set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -Wconversion -Wdouble-promotion \
+-Wduplicated-branches -Wduplicated-cond -Wimplicit-fallthrough -Wlogical-op \
+-Wmisleading-indentation -Wnull-dereference -Wshadow -Wsign-conversion \
+-Wunreachable-code -Wunused -Wuseless-cast -g")
+
 
 # No options are set here because the configuration is set in .clang-tidy
 # instead. If that file is not present, clang-tidy will be of limited help.
