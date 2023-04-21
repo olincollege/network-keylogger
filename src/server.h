@@ -51,6 +51,7 @@ void error_and_exit(const char* error_msg);
  * @return A socket descriptor corresponding to the new socket.
  */
 int open_server(void);
+
 /**
  * Attempt to close an open socket.
  *
