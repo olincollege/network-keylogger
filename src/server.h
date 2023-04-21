@@ -38,12 +38,15 @@ typedef struct {
   char** keys;  // an array of strings to be sent over the network
 } key_package;
 
+// Convenient error + exit program
+void error_and_exit(const char* error_msg);
+
 /**
  * Attempt to open an IPv4 TCP socket.
  *
  * Try to create a TCP socket on IPv4, and return the socket descriptor if
- * successful. If creating the socket is not successful, print an error message
- * and exit the program without returning from the function.
+ * successful. If creating the socket is not successful, print an error
+ * message and exit the program without returning from the function.
  *
  * @return A socket descriptor corresponding to the new socket.
  */
