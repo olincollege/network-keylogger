@@ -14,7 +14,7 @@
 
 void fileificate() {}
 
-int signal_counter = 0;
+void fileificate() {}
 
 void background_process(void) {
 //process line
