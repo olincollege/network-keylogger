@@ -1,7 +1,4 @@
 #pragma once
-<<<<<<< Updated upstream
-#include "keylogger.h"
-    =======
 
 #include <fcntl.h>
 #include <netinet/in.h>
@@ -12,8 +9,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-    // The port number that the server listens on.
-    extern const uint16_t PORT;
+#include "keylogger.h"
+
+// The port number that the server listens on.
+extern const uint16_t PORT;
 /**
  * Attempt to connect to a server on a given socket.
  *
@@ -71,7 +70,6 @@ FILE* get_socket_file(int client_socket);
  * (which may be EOF).
  */
 int echo(FILE* socket_file);
->>>>>>> Stashed changes
 
 #include <fcntl.h>
 #include <netinet/in.h>
