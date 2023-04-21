@@ -96,3 +96,20 @@ int accept_client(keylog_server* keylogger) {
     return 0;
   }
 }
+
+void echo(int socket_descriptor) {
+  char s[1000];
+  while (1) {
+    ssize_t got_message = recv(socket_descriptor, s, sizeof(s), 0);
+    if (got_message == -1) {
+      error_and_exit("Couldn't receive.");
+    }
+    if (got_message == 0) {
+      break;
+    }
+    ssize_t sent_message = send(socket_descriptor, s, (size_t)got_message, 0);
+    if (sent_message == -1) {
+      error_and_exit("Couldn't send");
+    }
+  }
+}

@@ -38,9 +38,6 @@ typedef struct {
   char** keys;  // an array of strings to be sent over the network
 } key_package;
 
-// Convenient error + exit program
-void error_and_exit(const char* error_msg);
-
 /**
  * Attempt to open an IPv4 TCP socket.
  *
@@ -141,3 +138,17 @@ void listen_for_client(keylog_server* keylogger);
  */
 
 int accept_client(keylog_server* keylogger);
+
+/**
+ * Read and echo lines from a client socket until the end of the file.
+ *
+ * Given a socket descriptor corresponding to to a connected client, read lines
+ * from the given socket, echoing them back on the same socket as each line is
+ * read. Continue this process until the client sends an EOF marker or until an
+ * error is encountered. Upon EOF, close the file and exit. Upon an error at
+ * any point, print an error message and terminate the program, in which case
+ * the function does not return.
+ *
+ * @param socket_descriptor The socket descriptor for the client connection.
+ */
+void echo(int socket_descriptor);

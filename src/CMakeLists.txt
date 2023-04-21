@@ -14,5 +14,7 @@ add_library(client client.c client.h)
 add_library(server server.c server.h)
 
 add_executable(main main.c)
+add_executable(run_server run_server.c)
 
 target_link_libraries(main PRIVATE client keylogger server)
+target_link_libraries(run_server PRIVATE client keylogger server)
