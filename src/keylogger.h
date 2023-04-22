@@ -1,4 +1,4 @@
-#pragma once
+// #pragma once
 
 /**
  * Represents all the data that is sent over the network
@@ -30,3 +30,5 @@ void begin_keylogger(void);
  * Documentation here
  */
 void end_keylogger(void);
+
+void keylogger_test_1(void);
