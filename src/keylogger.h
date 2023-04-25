@@ -31,4 +31,4 @@ void begin_keylogger(void);
  */
 void end_keylogger(void);
 
-void keylogger_test_1(void);
+int keylogger_test_1(void);
