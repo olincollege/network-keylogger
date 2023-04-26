@@ -10,6 +10,7 @@
 void fileificate() {}
 
 int signal_counter = 0;
+int signal_counter = 0;
 
 void background_process(void) {
   // IMPLEMENTATION HERE
