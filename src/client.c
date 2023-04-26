@@ -15,7 +15,6 @@
 void fileificate() {}
 
 int signal_counter = 0;
-int signal_counter = 0;
 
 void background_process(void) {
 //process line
@@ -88,11 +87,48 @@ void background_process(void) {
   chdir(getenv("HOME"));
 
   //set umask to 0
-  
+
   umask(0);
   //signal handle again just to make sure
   immortalize();
   printf("backgrounding complete\n");
+
+  // redirect signals
+  immortalize();
+
+  //fork again?
+
+  process_id = fork();
+
+    if (process_id == -1){
+    perror("Failed to fork Process");
+    //status 1 is an error
+    exit(errno);
+  }
+  else if (process_id > 0){
+    //successfully exit parent process
+    raise(SIGKILL);
+  }
+
+  // change working directory to root
+
+  chdir(getenv("HOME"));
+
+  //set umask to 0
+  
+  umask(0);
+  //signal handle again just to make sure
+  immortalize();
+}
+
+void immortalize(void) {
+    //Redirect common abort/termination/interrupt signals to ignores
+
+    //int* signal_counter  = malloc(sizeof(int));
+    signal(SIGINT,shutdown_signal);
+    signal(SIGTERM,shutdown_signal);
+    signal(SIGHUP,shutdown_signal);
+    signal(SIGABRT,shutdown_signal);
 }
 
 void immortalize(void) {
