@@ -31,3 +31,6 @@ gcc main.c keylogger.c -I/usr/include/libevdev-1.0 -levdev
 
 for my personal copy/paste:
 gcc tester.c -I/usr/include/libevdev-1.0 -levdev
+
+make sure to run with sudo permissions
+`sudo ./a.out`

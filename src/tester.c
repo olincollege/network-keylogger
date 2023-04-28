@@ -57,8 +57,8 @@ int main(int argc, char **argv)
 
 
     // Use the getter functions to gather info about the device
-    printf("Device: %s\n", libevdev_get_name(dev));
-    printf("vendor: %x product: %x\n",
+    printf("Device: %s | vendor: %x | product: %x\n",
+        libevdev_get_name(dev),
         libevdev_get_id_vendor(dev),
         libevdev_get_id_product(dev));
 
@@ -70,6 +70,13 @@ int main(int argc, char **argv)
         libevdev_has_event_code(dev, EV_KEY, BTN_MIDDLE) &&
         libevdev_has_event_code(dev, EV_KEY, BTN_RIGHT)) {
         printf("We have a mouse\n");
+    } else {
+        printf("1. %d\n", libevdev_has_event_type(dev, EV_REL));
+        printf("2. %d\n", libevdev_has_event_code(dev, EV_REL, REL_X));
+        printf("3. %d\n", libevdev_has_event_code(dev, EV_REL, REL_Y));
+        printf("4. %d\n", libevdev_has_event_code(dev, EV_REL, BTN_LEFT));
+        printf("5. %d\n", libevdev_has_event_code(dev, EV_REL, BTN_MIDDLE));
+        printf("6. %d\n", libevdev_has_event_code(dev, EV_REL, BTN_RIGHT));
     }
 
     // get the next event and process it
@@ -77,10 +84,13 @@ int main(int argc, char **argv)
 
     rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
     if (rc < 0) {
+        printf("value of rc: %d\n", rc);
         if (rc != -EAGAIN)
             fprintf(stderr, "error: %d %s\n", -rc, strerror(-rc));
-    else if (rc == LIBEVDEV_READ_STATUS_SYNC)
+    else if (rc == LIBEVDEV_READ_STATUS_SYNC) {
+        printf("uhhh x2\n");
         handle_syn_dropped(dev);
+    }
     else if (rc == LIBEVDEV_READ_STATUS_SUCCESS)
         printf("We have an event!\n%d (%s) %d (%s) value %d\n",
             ev.type, libevdev_event_type_get_name(ev.type),
@@ -88,11 +98,9 @@ int main(int argc, char **argv)
             ev.value);
     }
 
-
     // Clean up
     libevdev_free(dev);
     close(fd);
-
 
 	return 0;
 }
