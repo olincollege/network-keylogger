@@ -1,3 +1,8 @@
+/**
+ * Server-client connection creation utilities
+ *
+ */
+
 #include "server_utils.h"
 
 #include <stdint.h>  // uint16_t
