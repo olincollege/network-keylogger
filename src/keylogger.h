@@ -1,5 +1,6 @@
 #pragma once
-
+#include <stdio.h>
+#include <stdlib.h>
 /**
  * Represents all the data that is sent over the network
  */
