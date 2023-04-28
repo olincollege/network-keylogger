@@ -46,4 +46,4 @@ FILE* get_socket_file(int client_socket);
  * @return 0 if the entire process succeeded, and -1 if there was an error
  * (which may be EOF).
  */
-int echo(FILE* socket_file);
+int send_data(FILE* socket_file);

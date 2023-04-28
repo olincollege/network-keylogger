@@ -32,10 +32,11 @@ int main(void) {
 
   // Use a file pointer to make it easier to deal with text lines.
   FILE* socket_file = get_socket_file(socket_descriptor);
-  // Echo until either the client or the server closes its stream.
+
+  // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;
   while (socket_file_status != -1) {
-    socket_file_status = echo(socket_file);
+    socket_file_status = send_data(socket_file);
   }
 
   // If we didn't hit the end of file for either stdin or the response from the
