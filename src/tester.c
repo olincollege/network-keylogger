@@ -48,8 +48,6 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-
-
     // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
     // open a device, as libevdev expects a file descriptor. You should have root permissions
@@ -61,7 +59,7 @@ int main(int argc, char **argv) {
     // open a new device from the file descriptor and initialize
     fd = open("/dev/input/event0", O_RDONLY|O_NONBLOCK);
     if (fd < 0) {
-        printf("yuck %d\n", EXIT_FAILURE);
+        printf("error opening event0 %d\n", EXIT_FAILURE);
         fprintf(stderr, "error opening file: %d %s\n", errno, strerror(errno));
         return EXIT_FAILURE;
     }
@@ -78,14 +76,14 @@ int main(int argc, char **argv) {
         libevdev_get_name(dev),
         libevdev_get_id_vendor(dev),
         libevdev_get_id_product(dev));
+    
+    // TODO: store this data in a struct
 
     // store data into text file
-    if (data_storage != NULL) {
-        fprintf(data_storage, "Device: %s | vendor: %x | product: %x\n",
-            libevdev_get_name(dev),
-            libevdev_get_id_vendor(dev),
-            libevdev_get_id_product(dev));
-    }
+    fprintf(data_storage, "Device: %s | vendor: %x | product: %x\n",
+        libevdev_get_name(dev),
+        libevdev_get_id_vendor(dev),
+        libevdev_get_id_product(dev));
 
     // get keyboard inputs event file
     int keyboard_fd = open("/dev/input/event3", O_RDONLY|O_NONBLOCK);
@@ -123,8 +121,25 @@ int main(int argc, char **argv) {
                 ev.code, libevdev_event_code_get_name(ev.type, ev.code),
                 ev.value);
             // exit(1);
+
+            // TODO: make key struct, add to key package
+
+            // write to text file
+            // TODO: i think writing to the file should be handled in another file. but the implementation is here
+            fprintf(data_storage, "Event: %d (%s) %d (%s) value: %d\n",
+                ev.type, libevdev_event_type_get_name(ev.type),
+                ev.code, libevdev_event_code_get_name(ev.type, ev.code),
+                ev.value);
         } else {
             printf("unsure \n");
+        }
+
+        // TODO: change this. instead of writing to the file upon exiting
+        // upon pressing "c" (represented by code 46), it should write to the
+        // file every few seconds. 
+        if (ev.code == 46) {
+            printf("exiting\n");
+            exit(1);
         }
     }
 
