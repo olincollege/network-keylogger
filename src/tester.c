@@ -38,8 +38,16 @@ void handle_syn_dropped(struct libevdev *dev) {
 }
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
+    // open a file to write to. If it doesn't exist yet, this creates it
+    FILE* data_storage = fopen("data.txt","w");
+    if (data_storage == NULL) {
+        printf("Error with opening the text file!");
+        exit(1);
+    }
+
+
+
     // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
     // open a device, as libevdev expects a file descriptor. You should have root permissions
@@ -61,6 +69,13 @@ int main(int argc, char **argv)
         libevdev_get_name(dev),
         libevdev_get_id_vendor(dev),
         libevdev_get_id_product(dev));
+
+    // store data into text file
+    fprintf(data_storage,"Device: %s | vendor: %x | product: %x\n",
+        libevdev_get_name(dev),
+        libevdev_get_id_vendor(dev),
+        libevdev_get_id_product(dev));
+
 
     // check for E_REL first, then the actual axes. Allows us to skip libevdev_has_event_type()
     if (libevdev_has_event_type(dev, EV_REL) &&
@@ -101,6 +116,7 @@ int main(int argc, char **argv)
     // Clean up
     libevdev_free(dev);
     close(fd);
+    fclose(data_storage);
 
 	return 0;
 }
