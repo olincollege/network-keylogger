@@ -16,15 +16,6 @@
 #include <unistd.h>
 
 /**
- * Represents all the data that is sent over the network
- */
-typedef struct {
-  key_info* keys;        // An array of keys to be sent over the network.
-  size_t keys_arr_size;
-  char* device_name;  // A string representing the device type of the user.
-} key_package;
-
-/**
  * Represents all the associated data for one key that was pressed
  */
 typedef struct {
@@ -36,6 +27,15 @@ typedef struct {
                         approximating the number of characters that were
                         generated during this period. */
 } key_info;
+
+/**
+ * Represents all the data that is sent over the network
+ */
+typedef struct {
+  key_info* keys;        // An array of keys to be sent over the network.
+  size_t keys_arr_size;
+  char* device_name;  // A string representing the device type of the user.
+} key_package;
 
 /**
  * Documentation here
