@@ -19,7 +19,8 @@
  * Represents all the data that is sent over the network
  */
 typedef struct {
-  char** keys;        // An array of strings to be sent over the network.
+  key_info* keys;        // An array of keys to be sent over the network.
+  size_t keys_arr_size;
   char* device_name;  // A string representing the device type of the user.
 } key_package;
 
