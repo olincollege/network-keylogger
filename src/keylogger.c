@@ -33,7 +33,7 @@ void log_device(key_package* key_package) {
   // open a file to write to. If it doesn't exist yet, this creates it
   FILE* data_storage = fopen("data.txt", "w");
   if (data_storage == NULL) {
-    printf("Error with opening the text file!");
+    perror("Error with opening the text file!");
     exit(1);
   }
 
@@ -160,13 +160,13 @@ void log_keys(key_package* key_package) {
             .timestamp = asctime(timeinfo)
           };
 
-          printf("Created new key_info object. Key: %s  Timestamp: %s", pressed_key.key, pressed_key.timestamp);
+          printf("Created new key_info object. Key: %s  Timestamp: %s\n", pressed_key.key, pressed_key.timestamp);
 
           // append to key_package->keys
           key_package->keys[key_package->keys_arr_size] = pressed_key;
           key_package->keys_arr_size++;
 
-          printf("New key_package array size: %ld", key_package->keys_arr_size);
+          printf("New key_package array size: %ld\n", key_package->keys_arr_size);
         }
         // else {
         //   printf("Key unpressed!\n%d (%s) %d (%s) value %d\n",
@@ -195,8 +195,9 @@ void log_keys(key_package* key_package) {
       printf("All keys in key_package struct: \n");
 
       for (size_t i = 0; i < key_package->keys_arr_size; i++) {
-        printf("%s  ", key_package->keys->key[i]);
+        printf("%s  ", key_package->keys[i].key);
       }
+      printf("\n");
 
       exit(1);
     }
@@ -210,6 +211,7 @@ void log_keys(key_package* key_package) {
 
 int main(void) {
   key_package key_package;
+  key_package.keys_arr_size = 0;
   log_device(&key_package);
   log_keys(&key_package);
 
