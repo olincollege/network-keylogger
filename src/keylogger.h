@@ -45,25 +45,40 @@ void begin_keylogger(void);
 void end_keylogger(void);
 
 /**
- * Documentation here
+ * Logs the current device.
+ * 
+ * @param key_package A pointer to a key_package instance. Used to hold all
+ * data for the overall session.
  */
 void log_device(key_package* key_package);
 
 /**
- * Documentation here
+ * Helper function to parse large amounts of incoming events.
  * 
  * If the device sends events faster than can be read, the kernel buffers will
  * fill up and the kernel will skip events. This function resyncs the device
- * and updates the internal state before reading events again
+ * and updates the internal state before reading events again.
+ * 
+ * @param dev A pointer to a libevdev instance, representing the built-in keyboard
  */
 void handle_syn_dropped(struct libevdev* dev);
 
 /**
- * Documentation here
+ * Runs an infinite loop to store user keystrokes.
+ * 
+ * Can be exited with the `c` key. Upon exit, writes all keys into the
+ * key_package struct, in chronological order.
+ * 
+ * @param key_package A pointer to a key_package instance. Used to hold an array
+ * of key data for the overall session.
  */
 void log_keys(key_package* key_package);
 
 /**
- * Documentation here
+ * Given a key_package instance, prints all stored keys in the order they
+ * appear in the array.
+ * 
+ * @param key_package A pointer to a key_package instance. Used to hold all
+ * data for the overall session.
  */
 void print_logged_keys(key_package key_package);

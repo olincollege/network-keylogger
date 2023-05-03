@@ -29,6 +29,8 @@ void end_keylogger(void) {
   // IMPLEMENTATION HERE
 }
 
+// TODO: this currently doesn't work as expected, since it utilizes the device
+// of the event. Event 0 represents the lid of the laptop
 void log_device(key_package* key_package) {
   struct libevdev* dev;
   int rc;
