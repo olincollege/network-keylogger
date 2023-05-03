@@ -23,9 +23,6 @@ typedef struct {
   char* timestamp;   // The approximate time (UTC) that the key was pressed.
   // char* application; /* Represents the active application of the user when they
   //                       pressed the key. */
-  int* time_pressed; /* The number of times the user held down the key; used for
-                        approximating the number of characters that were
-                        generated during this period. */
 } key_info;
 
 /**
