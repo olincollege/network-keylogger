@@ -31,7 +31,7 @@ typedef struct {
 typedef struct {
   key_info* keys;        // An array of keys to be sent over the network.
   size_t keys_arr_size;
-  char* device_name;  // A string representing the device type of the user.
+  char* device_info;  // A string representing the device type of the user.
 } key_package;
 
 /**
