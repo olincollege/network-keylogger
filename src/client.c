@@ -26,20 +26,20 @@ void background_process(void) {
     exit(errno);
   }
   else if (process_id > 0){
-    //successfully exit parent process
+    // successfully exit parent process
     exit(0);
   }
 
-  //create a new process group
+  // create a new process group
   int group_id = setsid();
 
-  if(group_id == -1){
+  if (group_id == -1){
     perror("Failed to create a process group");
     exit(errno);
   }
 
 
-    //redirect signals
+  // redirect signals
   immortalize();
 
   //fork again?
