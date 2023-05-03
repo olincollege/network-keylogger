@@ -62,3 +62,8 @@ void handle_syn_dropped(struct libevdev* dev);
  * Documentation here
  */
 void log_keys(key_package* key_package);
+
+/**
+ * Documentation here
+ */
+void print_logged_keys(key_package key_package);

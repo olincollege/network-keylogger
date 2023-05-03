@@ -188,13 +188,6 @@ void log_keys(key_package* key_package) {
     if (ev.code == 46) {
       printf("exiting\n");
 
-      printf("All keys in key_package struct: \n");
-
-      for (size_t i = 0; i < key_package->keys_arr_size; i++) {
-        printf("%s  ", key_package->keys[i].key);
-      }
-      printf("\n");
-
       break;
     }
   }
@@ -202,4 +195,13 @@ void log_keys(key_package* key_package) {
   // Clean up
   libevdev_free(keyboard_dev);
   close(keyboard_fd);
+}
+
+void print_logged_keys(key_package key_package) {
+  printf("All keys in key_package struct: \n");
+
+  for (size_t i = 0; i < key_package.keys_arr_size; i++) {
+    printf("%s  ", key_package.keys[i].key);
+  }
+  printf("\n");
 }
