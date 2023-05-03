@@ -41,5 +41,11 @@ int send_data(FILE* socket_file) {
   }
 
   free(send_line);
+  char* recv_line = NULL;
+  size_t recv_line_size = 0;
+  if (getline(&recv_line, &recv_line_size, socket_file) == -1) {
+    return 0;
+  }
+  free(recv_line);
   return 0;
 }
