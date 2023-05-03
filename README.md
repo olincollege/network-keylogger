@@ -58,6 +58,11 @@ For the specific device I'm running (Ubuntu), the list is as follows:
 /dev/input/event28:     HDA Intel PCH HDMI/DP,pcm=9
 /dev/input/event29:     HDA Intel PCH HDMI/DP,pcm=10
 
-The program also accounts for 1 external keyboard, as long as it is plugged into one of the 3 USB ports of the Olin class of 2025 laptops. This external keyboard is read through a different event than the default laptop keyboard.
+The program also _should_ account for 1 external keyboard, as long as it is plugged into one of the 3 USB ports of the Olin class of 2025 laptops. This external keyboard is read through a different event than the default laptop keyboard.
 
 It also doesn't account for if the user connects/disconnects external keyboards while the program is running. It only checks once when the program begins.
+
+All of this ^ is what is desired. But unfortunately I am struggling with getting it to recognize an external keyboard so...
+
+
+Currently, you exit out of the loop by simply pressing `c`.
