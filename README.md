@@ -26,7 +26,7 @@ If you aren't using VS Code... good luck. -->
 
 You need to compile the script with special flags in order for libevdev to be recognized correctly.
 
-gcc keylogger.c keylogger.h -I/usr/include/libevdev-1.0 -levdev
+gcc main.c keylogger.c keylogger.h -I/usr/include/libevdev-1.0 -levdev
 
 make sure to run with sudo permissions
 `sudo ./a.out`
