@@ -2,7 +2,6 @@
  * Client side of server.
  */
 #include "client.h"
-#include "keylogger.h"
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -115,5 +114,4 @@ void shutdown_signal(int signal){
   signal_counter++;
   printf("You tried to shut down but failed");
 }
-
 
