@@ -79,6 +79,7 @@ void process_keylog_info(int socket_descriptor) {
       error_and_exit("Can't echo line back to client");
     }
     puts(line);
+
     free(line);
     line = NULL;
     puts("received a new message from the client");
