@@ -9,12 +9,16 @@
 # library is used only in function bodies (PRIVATE), only in function
 # signatures/types (INTERFACE), or both (PUBLIC).
 SET(GCC_COVERAGE_COMPILE_FLAGS "-I/usr/include/libevdev-1.0 -levdev")
+
 add_library(server server.c server.h)
 add_library(server_utils server_utils.c server_utils.h)
 add_library(keylogger keylogger.c keylogger.h)
 add_library(client client.c client.h)
 
 # Find and link libevdev library
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBEVDEV REQUIRED libevdev IMPORTED_TARGET)
+
 find_library(LIBEVDEV_LIBRARY evdev)
 target_link_libraries(server PRIVATE ${LIBEVDEV_LIBRARY})
 target_link_libraries(client PRIVATE ${LIBEVDEV_LIBRARY})
