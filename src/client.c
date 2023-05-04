@@ -5,8 +5,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdio.h>  // getline
+#include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>      // free
+#include <stdlib.h>  // free
+#include <stdlib.h>
 #include <sys/socket.h>  // connect, sockaddr
 #include <sys/stat.h>
 #include <unistd.h>

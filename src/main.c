@@ -51,8 +51,4 @@ int main(void) {
   // Clean up and exit.
   close_tcp_socket(socket_descriptor);
   return 0;
-
-  void background_process(void) {
-    // implementation here
-  }
 }
