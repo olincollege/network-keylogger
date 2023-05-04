@@ -2,11 +2,12 @@
 Main function to run to create keylogger and virus
 */
 
-#include "keylogger.h"
-#include "client.h"
-#include <unistd.h>
-#include <sys/types.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include "client.h"
+#include "keylogger.h"
 
 void background_process(void) {
   // implementation here
@@ -34,9 +35,6 @@ void main(void) {
   // printf("Host name: %s\n", key_package.host_device_name);
   // printf("Host IP: %s\n", key_package.host_device_IP);
 }
-
-
-
 
 // #include "keylogger.h"
 

