@@ -26,14 +26,6 @@
 #include <time.h>
 #include <unistd.h>
 
-void begin_keylogger(void) {
-  // IMPLEMENTATION HERE
-}
-
-void end_keylogger(void) {
-  // IMPLEMENTATION HERE
-}
-
 // Returns hostname for the local computer
 void checkHostName(int hostname) {
   if (hostname == -1) {
