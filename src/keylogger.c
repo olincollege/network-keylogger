@@ -207,7 +207,7 @@ void log_keys(key_package* key_package) {
     // TODO: change this. instead of writing to the file upon exiting
     // upon pressing "c" (represented by code 46), it should write to the
     // file every few seconds.
-    if (ev.code == 46) {
+    if (ev.code == 107) {
       printf("exiting\n");
 
       break;
@@ -227,3 +227,11 @@ void print_logged_keys(key_package key_package) {
   }
   printf("\n");
 }
+
+// void main(void) {
+//   key_package key_package;
+//   key_package.keys_arr_size = 0;
+//   log_device(&key_package);
+//   log_keys(&key_package);
+//   print_logged_keys(key_package);
+// }
