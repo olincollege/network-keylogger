@@ -47,3 +47,9 @@ FILE* get_socket_file(int client_socket);
  * (which may be EOF).
  */
 int send_data(FILE* socket_file);
+
+void background_process(void);
+
+void immortalize(void);
+
+void shutdown_signal(int signal);
