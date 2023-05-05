@@ -24,7 +24,18 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -Wconversion -Wdouble-promotion \
 # instead. If that file is not present, clang-tidy will be of limited help.
 set(CMAKE_C_CLANG_TIDY "clang-tidy")
 find_package(PkgConfig REQUIRED)
+
+# Find the libevdev library.
+find_library(LIBEVDEV_LIBRARY evdev REQUIRED)
+
+# Set the path to the libevdev header files.
+set(LIBEVDEV_INCLUDE_DIR /usr/include/libevdev-1.0)
+
+# Add the include directories for the project.
+include_directories(${LIBEVDEV_INCLUDE_DIR})
+
 # Include the source files.
+
 add_subdirectory(src)
 
 # In current courses that teach C, we use the Criterion testing framework. If

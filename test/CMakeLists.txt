@@ -15,12 +15,6 @@
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-conversion -Wno-int-conversion")
 
-# add libevdev library
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBEVDEV REQUIRED libevdev)
-include_directories(${LIBEVDEV_INCLUDE_DIRS})
-link_directories(${LIBEVDEV_LIBRARY_DIRS})
-
 list(APPEND CMAKE_CTEST_ARGUMENTS --verbose)
 
 add_executable(test_keylogger test_keylogger.c)
