@@ -118,22 +118,22 @@ void shutdown_signal(int signal) {
 
   // on 5th actually shutdown
   if (signal_counter > 4) {
-    // I am not linting this line as it should be asynchronous safe since
+    // Not linting this line as it should be asynchronous safe since
     // raising SIGKILL should only be able to be called once
 
     // NOLINTNEXTLINE(bugprone-signal-handler,cert-sig30-c)
     printf("Ending Program");
     (void)raise(SIGKILL);
-    printf("Error Killing Program");
+    printf("Error Killing Program.");
   }
   signal_counter++;
-  printf("Shutdown Signal Blocked");
+  printf("Shutdown Signal Blocked.");
 }
 
 void try_connect(int client_socket, struct sockaddr_in server_addr) {
   if (connect(client_socket, (struct sockaddr*)&server_addr,
               sizeof(server_addr)) < 0) {
-    error_and_exit("Error connecting to server");
+    error_and_exit("Error connecting to server.");
   }
   printf("CLIENT CONNECTED\n");
 }
@@ -141,7 +141,7 @@ void try_connect(int client_socket, struct sockaddr_in server_addr) {
 FILE* get_socket_file(int client_socket) {
   FILE* socket_file = fdopen(client_socket, "w+");
   if (socket_file == NULL) {
-    error_and_exit("Couldn't open socket as file stream");
+    error_and_exit("Couldn't open socket as file stream.");
   }
   return socket_file;
 }
@@ -155,13 +155,15 @@ int send_data(FILE* socket_file) {
   // If we can't send the line on the socket, the connection is broken and we
   // have to exit. (
   printf("%s \n", send_line);
-  puts("client sent line");
+  puts("Client sent line.");
   // printf("%i\n", fileno(socket_file));
 
   if (fputs(send_line, socket_file) == EOF) {
     free(send_line);
-    error_and_exit("Couldn't send line");
+    error_and_exit("Couldn't send line.");
   }
+
+  printf("SOBBING \n");
 
   free(send_line);
   char* recv_line = NULL;
