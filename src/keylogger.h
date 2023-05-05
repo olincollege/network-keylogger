@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+// the libevdev library has warnings for the variable names being too short
+// NOLINTNEXTLINE
 #include <libevdev/libevdev.h>
 #include <pthread.h>
 #include <signal.h>
@@ -11,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -37,6 +40,10 @@ typedef struct {
   // char* host_device_name;  // A string representing the device name of the
   // user. char* host_device_IP;  // A string representing the user's IP.
 } key_package;
+
+// Converts space-delimited IPv4 addresses
+// to dotted-decimal format
+void check_IP_buffer(char* IPbuffer);
 
 /**
  * Documentation here
