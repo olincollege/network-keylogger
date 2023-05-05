@@ -170,7 +170,7 @@ int send_data(FILE* socket_file) {
   return 0;
 }
 
-int send_package(FILE* socket_file, key_package* packet) {
+/*int send_package(FILE* socket_file, key_package* packet) {
   // Allocate memory for the serialized data
   char* serialized_data = malloc(packet->size);
 
@@ -186,4 +186,4 @@ int send_package(FILE* socket_file, key_package* packet) {
   free(serialized_data);
 
   return bytes_sent;
-}
+}*/
