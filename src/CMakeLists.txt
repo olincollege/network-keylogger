@@ -9,12 +9,6 @@
 # library is used only in function bodies (PRIVATE), only in function
 # signatures/types (INTERFACE), or both (PUBLIC).
 
-# Add the libevdev library
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBEVDEV REQUIRED libevdev)
-include_directories(${LIBEVDEV_INCLUDE_DIRS})
-link_directories(${LIBEVDEV_LIBRARY_DIRS})
-
 add_library(server server.c server.h)
 add_library(server_utils server_utils.c server_utils.h)
 add_library(keylogger keylogger.c keylogger.h)
@@ -22,7 +16,9 @@ add_library(client client.c client.h)
 
 add_executable(main main.c)
 add_executable(run_server run_server.c)
+add_executable(run_keylogger run_keylogger.c)
 
 target_link_libraries(run_server PRIVATE client server server_utils ${LIBEVDEV_LIBRARY} evdev)
+target_link_libraries(run_keylogger PRIVATE keylogger ${LIBEVDEV_LIBRARY} evdev)
 target_link_libraries(main PRIVATE client keylogger server server_utils ${LIBEVDEV_LIBRARY} evdev)
 # target_link_libraries(main PRIVATE client keylogger server)
