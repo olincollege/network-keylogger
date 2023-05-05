@@ -92,3 +92,17 @@ void print_logged_keys(key_package package) {
   }
   printf("\n");
 }
+
+void keys_to_file(FILE* package_log, key_package package) {
+  char* line = "";
+  for (size_t i = 0; i < package.keys_arr_size; i++) {
+    fprintf(package_log, "Key:");
+    fprintf(package_log, package.keys[i].key);
+    fprintf(package_log, " Timestamp: ");
+    fprintf(package_log, package.keys[i].timestamp);
+
+    fprintf(package_log, "\t");
+  }
+
+  fprintf(package_log, "\n");
+}
