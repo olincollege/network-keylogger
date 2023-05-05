@@ -129,6 +129,9 @@ int main(void) {
         reset_structs(package);
       }
       ++file_name_counter;
+
+      FILE* read_log = fopen(file_name, "r");
+      send_data(socket_file, read_log);
     }
 
     if (ev.code == 107) {
