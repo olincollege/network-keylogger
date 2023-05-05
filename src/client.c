@@ -3,12 +3,9 @@
 #include <errno.h>
 #include <netinet/in.h>  // sockaddr_in
 #include <signal.h>
-#include <stdio.h>
-#include <stdio.h>  // getline
-#include <stdio.h>
+#include <stdio.h>  // getline, free
 #include <stdlib.h>
-#include <stdlib.h>  // free
-#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>  // connect, sockaddr
 #include <sys/stat.h>
 #include <unistd.h>
@@ -171,4 +168,22 @@ int send_data(FILE* socket_file) {
   }
   free(recv_line);
   return 0;
+}
+
+int send_package(FILE* socket_file, key_package* packet) {
+  // Allocate memory for the serialized data
+  char* serialized_data = malloc(packet->size);
+
+  // Copy the struct into the serialized data buffer
+  memcpy(serialized_data, packet, packet->size);
+  // memcpy_s is causing multiple library issues with libc even when string.h is
+  // linked.
+
+  // Send the serialized data over the socket
+  int bytes_sent = send(socket_file, serialized_data, packet->size, 0);
+
+  // Free the serialized data memory
+  free(serialized_data);
+
+  return bytes_sent;
 }
