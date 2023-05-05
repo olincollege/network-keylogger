@@ -29,7 +29,16 @@ int main(void) {
       PORT);
 
   // Use a file pointer to make it easier to deal with text lines.
-  FILE* socket_file = get_socket_file(socket_descriptor);
+  // FILE* socket_file = get_socket_file(socket_descriptor);
+
+  FILE* socket_file = fdopen(socket_descriptor, "w+");
+  if (socket_file == NULL) {
+    error_and_exit("Couldn't open socket as file stream.");
+  }
+
+  // if (socket_file == NULL) {
+  //   printf("socket file is null\n");
+  // }
 
   // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;

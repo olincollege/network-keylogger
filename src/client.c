@@ -157,6 +157,8 @@ int send_data(FILE* socket_file) {
   puts("Client sent line.");
   // printf("%i\n", fileno(socket_file));
 
+  fputs(send_line, socket_file);
+
   if (fputs(send_line, socket_file) == EOF) {
     free(send_line);
     error_and_exit("Couldn't send line.");
