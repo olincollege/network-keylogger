@@ -23,7 +23,7 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -Wconversion -Wdouble-promotion \
 # No options are set here because the configuration is set in .clang-tidy
 # instead. If that file is not present, clang-tidy will be of limited help.
 set(CMAKE_C_CLANG_TIDY "clang-tidy")
-
+find_package(PkgConfig REQUIRED)
 # Include the source files.
 add_subdirectory(src)
 
