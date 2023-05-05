@@ -56,6 +56,8 @@ void end_keylogger(void);
  */
 void log_device(key_package* key_package);
 
+void reset_structs(key_package* key_package);
+
 /**
  * Runs an infinite loop to store user keystrokes.
  *
