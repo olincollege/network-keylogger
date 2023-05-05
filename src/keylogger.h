@@ -57,6 +57,11 @@ void end_keylogger(void);
 void log_device(key_package* key_package);
 
 /**
+ * DOCSTRING HERE
+*/
+void reset_structs(key_package* key_package);
+
+/**
  * Runs an infinite loop to store user keystrokes.
  *
  * Can be exited with the `c` key. Upon exit, writes all keys into the

