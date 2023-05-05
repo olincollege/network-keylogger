@@ -36,13 +36,14 @@ int main(void) {
   if (socket_file == NULL) {
     error_and_exit("Couldn't open socket as file stream.");
   }
+  key_package pack;
+  pack.keys_arr_size = 0;
+  key_package* package = &pack;
 
-  key_package* package;
-  package->keys_arr_size = 0;
-  log_device(&package);
-  // if (socket_file == NULL) {
-  //   printf("socket file is null\n");
-  // }
+  log_device(package);
+  //  if (socket_file == NULL) {
+  //    printf("socket file is null\n");
+  //  }
 
   // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;
@@ -69,7 +70,6 @@ int main(void) {
   int file_name_counter = 0;
   int counter = 0;
   while (socket_file_status != -1) {
-    puts("1");
     ++counter;
     struct input_event ev;
 

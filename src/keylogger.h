@@ -6,7 +6,6 @@
 #include <fcntl.h>
 // the libevdev library has warnings for the variable names being too short
 // NOLINTNEXTLINE
-#include <libevdev/libevdev.h>
 #include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
