@@ -88,13 +88,13 @@ void log_keys(key_package* key_package) {
   // get keyboard inputs event file
   int keyboard_fd = open("/dev/input/event3", O_RDONLY | O_NONBLOCK);
   if (keyboard_fd < 0) {
-    fprintf(stderr, "error opening event3 file: %d %s\n", errno,
+    fprintf(stderr, "Error opening event3 file: %d %s\n", errno,
             strerror(errno));
     exit(0);
   }
   rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
   if (rc < 0) {
-    fprintf(stderr, "error with setting rc: %d %s\n", -rc, strerror(-rc));
+    fprintf(stderr, "Error with setting rc: %d %s\n", -rc, strerror(-rc));
     exit(0);
   }
 
@@ -122,7 +122,7 @@ void log_keys(key_package* key_package) {
     // check that the event is a keyboard. If so, exit this loop immediately
     rc = libevdev_new_from_fd(external_fd, &external_keyboard_dev);
     if (rc < 0) {
-      fprintf(stderr, "error with setting rc for %s: %d %s\n", event_path, -rc,
+      fprintf(stderr, "Error with setting rc for %s: %d %s\n", event_path, -rc,
               strerror(-rc));
       exit(0);
     }
@@ -187,7 +187,7 @@ void log_keys(key_package* key_package) {
     // upon pressing "c" (represented by code 46), it should write to the
     // file every few seconds.
     if (ev.code == 107) {
-      printf("\nexiting\n");
+      printf("\nExiting.\n");
 
       break;
     }
