@@ -80,3 +80,5 @@ void log_keys(key_package* key_package);
  * data for the overall session.
  */
 void print_logged_keys(key_package key_package);
+
+void end_logging(void);

