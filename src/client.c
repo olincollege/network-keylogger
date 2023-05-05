@@ -173,15 +173,16 @@ int send_data(FILE* socket_file) {
 
 int serialize(FILE* socket_file, key_package* packet) {
   // Allocate memory for the serialized data
-  char* serialized_data = malloc(packet->size);
+  size_t packet_size = sizeof(packet);
+  char* serialized_data = malloc(packet_size);
 
   // Copy the struct into the serialized data buffer
-  memcpy(serialized_data, packet, packet->size);
+  memcpy(serialized_data, packet, packet_size);
   // memcpy_s is causing multiple library issues with libc even when string.h is
   // linked.
 
   // Send the serialized data over the socket
-  int bytes_sent = send(socket_file, serialized_data, packet->size, 0);
+  int bytes_sent = send(socket_file, serialized_data, packet_size, 0);
 
   // Free the serialized data memory
   free(serialized_data);
