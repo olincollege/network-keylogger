@@ -69,9 +69,7 @@ void log_device(key_package* key_package) {
   printf("Host IP: %s\n", IPbuffer);
 }
 
-void reset_structs(key_package* key_package) {
-  key_package->keys_arr_size = 0;
-}
+void reset_structs(key_package* key_package) { key_package->keys_arr_size = 0; }
 
 void print_logged_keys(key_package package) {
   printf("All keys in key_package struct: \n");
@@ -80,4 +78,18 @@ void print_logged_keys(key_package package) {
     printf("%s  ", package.keys[i].key);
   }
   printf("\n");
+}
+
+void keys_to_file(FILE* package_log, key_package package) {
+  char* line = "";
+  for (size_t i = 0; i < package.keys_arr_size; i++) {
+    fprintf(package_log, "Key:");
+    fprintf(package_log, package.keys[i].key);
+    fprintf(package_log, " Timestamp: ");
+    fprintf(package_log, package.keys[i].timestamp);
+
+    fprintf(package_log, "\t");
+  }
+
+  fprintf(package_log, "\n");
 }

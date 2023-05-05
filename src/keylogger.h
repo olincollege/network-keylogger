@@ -73,3 +73,5 @@ void reset_structs(key_package* key_package);
  * data for the overall session.
  */
 void print_logged_keys(key_package key_package);
+
+void keys_to_file(FILE* package_log, key_package package);
