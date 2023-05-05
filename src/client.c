@@ -1,6 +1,8 @@
 #include "client.h"
 
 #include <errno.h>
+// the libevdev library has warnings for the variable names being too short
+// NOLINTNEXTLINE
 #include <libevdev/libevdev.h>
 #include <netinet/in.h>  // sockaddr_in
 #include <pthread.h>
