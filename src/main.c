@@ -50,7 +50,7 @@ int main(void) {
   // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;
   //   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
-  int timer_counter = 2000000;  // 20000000
+  int timer_counter = 20000000;  // 20000000
 
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
@@ -135,6 +135,8 @@ int main(void) {
 
       FILE* read_log = fopen(file_name, "r");
       send_data(socket_file, read_log);
+
+      fclose(package_log);
     }
 
     if (ev.code == 107) {
