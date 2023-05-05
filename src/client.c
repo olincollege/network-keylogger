@@ -258,7 +258,8 @@ void log_keys(key_package* package) {
 
     if (counter == timer_counter) {
       counter = 0;
-      // TODO: pass this info to the client to store
+      // read and write and whee
+
       print_logged_keys(*package);
       if (package->keys_arr_size != 0) {
         reset_structs(package);

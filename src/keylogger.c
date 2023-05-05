@@ -22,7 +22,6 @@
 #include <sys/socket.h>  // display hostname
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <sys/types.h>  // display hostname
 #include <time.h>
 #include <unistd.h>
 
