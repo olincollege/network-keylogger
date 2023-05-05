@@ -57,4 +57,8 @@ int serialize(FILE* socket_file, key_package* packet);
  * @param key_package A pointer to a key_package instance. Used to hold an array
  * of key data for the overall session.
  */
-void log_keys(key_package* key_package);
+// int log_keys(FILE* socket_file, key_package* package);
+
+int send_data(FILE* socket_file, FILE* in_file);
+FILE* get_socket_file(int client_socket);
+void try_connect(int client_socket, struct sockaddr_in server_addr);

