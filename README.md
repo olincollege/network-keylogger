@@ -56,3 +56,7 @@ All of this ^ is what is desired. But unfortunately I am struggling with getting
 
 
 Currently, you exit out of the loop by simply pressing `c`.
+
+
+
+ADITI ADD INSTRUCTIONS HERE ABOUT HOW TO OVERCOME THE SUDO PERMS
