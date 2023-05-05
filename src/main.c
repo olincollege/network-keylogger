@@ -16,7 +16,7 @@ const socklen_t MAX_IP_ADDR_LEN = 16;
 int main(void) {
   // Open a TCP socket to connect to the server.
   int socket_descriptor = open_tcp_socket();
-  (void)fprintf(stderr, "Client socket descriptor: %d\n", socket_descriptor);
+  (void)fprintf(stderr, "Client socket descriptor: %d.\n", socket_descriptor);
 
   // Connect to the server running on this machine (127.0.0.1).
   struct sockaddr_in server_addr = socket_address(INADDR_LOOPBACK, PORT);
@@ -24,7 +24,7 @@ int main(void) {
   // To print an IP address as a string, we need to allocate a buffer.
   char addr_string[MAX_IP_ADDR_LEN];
   (void)fprintf(
-      stderr, "Connected to server at %s, port %d\n",
+      stderr, "Connected to server at %s, port %d.\n",
       inet_ntop(AF_INET, &server_addr.sin_addr, addr_string, MAX_IP_ADDR_LEN),
       PORT);
 
