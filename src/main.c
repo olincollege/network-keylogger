@@ -19,6 +19,7 @@ int main(void) {
   log_device(&key_package);
   log_keys(&key_package);
   print_logged_keys(key_package);*/
+
   // Open a TCP socket to connect to the server.
   int socket_descriptor = open_tcp_socket();
   (void)fprintf(stderr, "Client socket descriptor: %d.\n", socket_descriptor);

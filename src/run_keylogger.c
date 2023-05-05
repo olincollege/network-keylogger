@@ -2,7 +2,7 @@
  * Script created to run/test the keylogger (prior to unit tests).
  */
 
-#include "keylogger.h"
+#include "client.h"
 
 int main(void) {
   key_package pack;
