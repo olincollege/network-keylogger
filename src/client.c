@@ -265,21 +265,6 @@ int serialize(FILE* socket_file, key_package* packet) {
 //       counter = 0;
 //       // read and write and whee
 
-//       FILE* package_log = fopen("in.txt", "a");
-//       if (package_log == NULL) {
-//         error_and_exit("Couldn't open file");
-//       }
-//       keys_to_file(package_log, *package);
-//       // call send data functoin on package_log
-//       if (send_data(socket_file, package_log) == -1) {
-//         error_and_exit("sending broke");
-//       }
-
-//       if (package->keys_arr_size != 0) {
-//         reset_structs(package);
-//       }
-//     }
-
 //     if (ev.code == 107) {
 //       // if (log_indicator == 0) {
 //       printf("\nExiting.\n");
