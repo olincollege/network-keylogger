@@ -33,12 +33,12 @@ void background_process(void) {
   //-9 for kill, -2 for int
   // sudo kill -9 -- -GROUPID
 
-  printf("Begin Backgrounding 1\n");
+  printf("Begin Backgrounding 1.\n");
 
   int process_id = fork();
 
   if (process_id == -1) {
-    perror("Failed to fork Process\n");
+    perror("Failed to fork Process.\n");
     // printf("failed to fork 1\n");
     // status 1 is an error
     //  NOLINTNEXTLINE(concurrency-mt-unsafe)
@@ -46,7 +46,7 @@ void background_process(void) {
   } else if (process_id > 0) {
     // successfully exit parent process
 
-    printf("parent exiting\n");
+    printf("Parent exiting.\n");
     // NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(0);
   }
@@ -59,20 +59,20 @@ void background_process(void) {
   process_id = fork();
 
   if (process_id == -1) {
-    perror("Failed to fork Process\n");
+    perror("Failed to fork Process.\n");
     // status 1 is an error
     //  NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(errno);
   } else if (process_id > 0) {
     // successfully exit parent process
-    printf("killing parent");
+    printf("Killing parent.");
     // raise(SIGKILL);
     //  NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(0);
     // this is intentional error checking code and should remain althought
     // unreachable
     //  NOLINTNEXTLINE(clang-diagnostic-unreachable-code)
-    perror("this should not be viewable");
+    perror("This should not be viewable.");
   }
   // change working directory to root
 
@@ -162,8 +162,6 @@ int send_data(FILE* socket_file) {
     free(send_line);
     error_and_exit("Couldn't send line.");
   }
-
-  printf("SOBBING \n");
 
   free(send_line);
   char* recv_line = NULL;
