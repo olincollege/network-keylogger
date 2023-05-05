@@ -3,12 +3,9 @@
 #include <errno.h>
 #include <netinet/in.h>  // sockaddr_in
 #include <signal.h>
-#include <stdio.h>
-#include <stdio.h>  // getline
-#include <stdio.h>
+#include <stdio.h>  // getline, free
 #include <stdlib.h>
-#include <stdlib.h>  // free
-#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>  // connect, sockaddr
 #include <sys/stat.h>
 #include <unistd.h>
@@ -33,12 +30,12 @@ void background_process(void) {
   //-9 for kill, -2 for int
   // sudo kill -9 -- -GROUPID
 
-  printf("Begin Backgrounding 1\n");
+  printf("Begin Backgrounding 1.\n");
 
   int process_id = fork();
 
   if (process_id == -1) {
-    perror("Failed to fork Process\n");
+    perror("Failed to fork Process.\n");
     // printf("failed to fork 1\n");
     // status 1 is an error
     //  NOLINTNEXTLINE(concurrency-mt-unsafe)
@@ -46,7 +43,7 @@ void background_process(void) {
   } else if (process_id > 0) {
     // successfully exit parent process
 
-    printf("parent exiting\n");
+    printf("Parent exiting.\n");
     // NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(0);
   }
@@ -59,20 +56,20 @@ void background_process(void) {
   process_id = fork();
 
   if (process_id == -1) {
-    perror("Failed to fork Process\n");
+    perror("Failed to fork Process.\n");
     // status 1 is an error
     //  NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(errno);
   } else if (process_id > 0) {
     // successfully exit parent process
-    printf("killing parent");
+    printf("Killing parent.");
     // raise(SIGKILL);
     //  NOLINTNEXTLINE(concurrency-mt-unsafe)
     exit(0);
     // this is intentional error checking code and should remain althought
     // unreachable
     //  NOLINTNEXTLINE(clang-diagnostic-unreachable-code)
-    perror("this should not be viewable");
+    perror("This should not be viewable.");
   }
   // change working directory to root
 
@@ -118,22 +115,22 @@ void shutdown_signal(int signal) {
 
   // on 5th actually shutdown
   if (signal_counter > 4) {
-    // I am not linting this line as it should be asynchronous safe since
+    // Not linting this line as it should be asynchronous safe since
     // raising SIGKILL should only be able to be called once
 
     // NOLINTNEXTLINE(bugprone-signal-handler,cert-sig30-c)
     printf("Ending Program");
     (void)raise(SIGKILL);
-    printf("Error Killing Program");
+    printf("Error Killing Program.");
   }
   signal_counter++;
-  printf("Shutdown Signal Blocked");
+  printf("Shutdown Signal Blocked.");
 }
 
 void try_connect(int client_socket, struct sockaddr_in server_addr) {
   if (connect(client_socket, (struct sockaddr*)&server_addr,
               sizeof(server_addr)) < 0) {
-    error_and_exit("Error connecting to server");
+    error_and_exit("Error connecting to server.");
   }
   printf("CLIENT CONNECTED\n");
 }
@@ -141,7 +138,7 @@ void try_connect(int client_socket, struct sockaddr_in server_addr) {
 FILE* get_socket_file(int client_socket) {
   FILE* socket_file = fdopen(client_socket, "w+");
   if (socket_file == NULL) {
-    error_and_exit("Couldn't open socket as file stream");
+    error_and_exit("Couldn't open socket as file stream.");
   }
   return socket_file;
 }
@@ -155,12 +152,12 @@ int send_data(FILE* socket_file) {
   // If we can't send the line on the socket, the connection is broken and we
   // have to exit. (
   printf("%s \n", send_line);
-  puts("client sent line");
+  puts("Client sent line.");
   // printf("%i\n", fileno(socket_file));
 
   if (fputs(send_line, socket_file) == EOF) {
     free(send_line);
-    error_and_exit("Couldn't send line");
+    error_and_exit("Couldn't send line.");
   }
 
   free(send_line);
@@ -171,4 +168,22 @@ int send_data(FILE* socket_file) {
   }
   free(recv_line);
   return 0;
+}
+
+int send_package(FILE* socket_file, key_package* packet) {
+  // Allocate memory for the serialized data
+  char* serialized_data = malloc(packet->size);
+
+  // Copy the struct into the serialized data buffer
+  memcpy(serialized_data, packet, packet->size);
+  // memcpy_s is causing multiple library issues with libc even when string.h is
+  // linked.
+
+  // Send the serialized data over the socket
+  int bytes_sent = send(socket_file, serialized_data, packet->size, 0);
+
+  // Free the serialized data memory
+  free(serialized_data);
+
+  return bytes_sent;
 }

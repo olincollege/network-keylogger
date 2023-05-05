@@ -17,7 +17,7 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -Wconversion -Wdouble-promotion \
 -Wduplicated-branches -Wduplicated-cond -Wimplicit-fallthrough -Wlogical-op \
 -Wmisleading-indentation -Wnull-dereference -Wshadow -Wsign-conversion \
--Wunreachable-code -Wunused -Wuseless-cast -g")
+-Wunreachable-code -Wunused -Wuseless-cast -g \ -D_POSIX_C_SOURCE=200809L")
 
 
 # No options are set here because the configuration is set in .clang-tidy
@@ -37,6 +37,7 @@ include_directories(${LIBEVDEV_INCLUDE_DIR})
 # Include the source files.
 
 add_subdirectory(src)
+
 
 # In current courses that teach C, we use the Criterion testing framework. If
 # If you want to use a different framework, or if you want to skip testing
