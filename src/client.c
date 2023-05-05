@@ -157,10 +157,19 @@ int send_data(FILE* socket_file) {
   puts("Client sent line.");
   // printf("%i\n", fileno(socket_file));
 
+  printf("1\n");
+  printf("send line: %s\n", send_line);
+  printf("send line: %p\n", socket_file);
+
+  fputs(send_line, socket_file);
+  printf("fuck off\n");
+
   if (fputs(send_line, socket_file) == EOF) {
+    printf("2\n");
     free(send_line);
     error_and_exit("Couldn't send line.");
   }
+  printf("3\n");
 
   free(send_line);
   char* recv_line = NULL;
