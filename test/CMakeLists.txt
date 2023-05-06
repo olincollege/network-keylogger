@@ -38,3 +38,15 @@ add_test(
    NAME test_server
    COMMAND test_server ${CRITERION_FLAGS}
 )
+
+
+add_executable(test_server_utils test_server_utils.c)
+target_link_libraries(test_server_utils
+   PRIVATE server_utils
+   ${LIBEVDEV_LIBRARY} evdev
+   PUBLIC ${CRITERION}
+)
+add_test(
+   NAME test_server_utils
+   COMMAND test_server_utils ${CRITERION_FLAGS}
+)
