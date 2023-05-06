@@ -10,7 +10,7 @@
 #include <stdlib.h>  // exit, EXIT_FAILURE
 #include <unistd.h>  // close
 
-const uint16_t PORT = 2025;
+const uint16_t PORT = 3335;
 
 void error_and_exit(const char* error_msg) {
   perror(error_msg);

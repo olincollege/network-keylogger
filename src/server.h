@@ -1,7 +1,7 @@
 #pragma once
 
 #include <netinet/in.h>
-#include <stdio.h>>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 
@@ -88,7 +88,5 @@ int accept_client(keylog_server* server);
  */
 void process_keylog_info(int socket_descriptor);
 
-// void echo(int socket_descriptor);
-int deserialize(FILE* socket_file, key_package* package);
-
-void key_package_to_file(key_package* package);
+// int deserialize(FILE* socket_file, key_package* package);
+// void key_package_to_file(key_package* package);
