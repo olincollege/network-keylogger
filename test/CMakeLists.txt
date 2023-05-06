@@ -30,7 +30,7 @@ target_link_libraries(test_keylogger
 
 add_executable(test_server test_server.c)
 target_link_libraries(test_server
-   PRIVATE server
+   PRIVATE server server_utils
    ${LIBEVDEV_LIBRARY} evdev
    PUBLIC ${CRITERION}
 )
