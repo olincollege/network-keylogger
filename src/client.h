@@ -75,7 +75,7 @@ FILE* get_socket_file(int client_socket);
  *
  * @param socket_file   A file pointer corresponding to a client socket.
  */
-int send_data(FILE* socket_file);
+int send_data(FILE* socket_file, char* file_name);
 
 // int serialize(FILE* socket_file, key_package* packet);
 
@@ -88,4 +88,6 @@ int send_data(FILE* socket_file);
  * @param key_package A pointer to a key_package instance. Used to hold an array
  * of key data for the overall session.
  */
-void log_keys(key_package* key_package);
+// int log_keys(FILE* socket_file, key_package* package);
+
+char* read_file(const char* filename);

