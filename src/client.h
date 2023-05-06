@@ -59,6 +59,8 @@ int serialize(FILE* socket_file, key_package* packet);
  */
 // int log_keys(FILE* socket_file, key_package* package);
 
-int send_data(FILE* socket_file, FILE* in_file);
+int send_data(FILE* socket_file, char* file_name);
 FILE* get_socket_file(int client_socket);
 void try_connect(int client_socket, struct sockaddr_in server_addr);
+
+char* read_file(const char* filename);

