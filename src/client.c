@@ -174,7 +174,7 @@ int send_data(FILE* socket_file) {
   return 0;
 }
 
-int serialize(FILE* socket_file, key_package* packet) {
+/* int serialize(FILE* socket_file, key_package* packet) {
   // Allocate memory for the serialized data
   size_t packet_size = sizeof(packet);
   char* serialized_data = malloc(packet_size);
@@ -191,7 +191,7 @@ int serialize(FILE* socket_file, key_package* packet) {
   free(serialized_data);
 
   return bytes_sent;
-}
+}*/
 
 void log_keys(key_package* package) {
   // http://who-t.blogspot.com/2013/09/libevdev-handling-input-events.html

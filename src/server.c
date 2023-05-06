@@ -104,7 +104,7 @@ void process_keylog_info(int socket_descriptor) {
   }
 }
 
-int deserialize(FILE* socket_file, key_package* package) {
+/* int deserialize(FILE* socket_file, key_package* package) {
   // Receive serialized data from socket
   size_t package_size = sizeof(*package);
   char* serialized_data = malloc(package_size);
@@ -142,4 +142,4 @@ void key_package_to_file(key_package* package) {
            package->keys[i].timestamp),
           package_log);
   }
-}
+}*/
