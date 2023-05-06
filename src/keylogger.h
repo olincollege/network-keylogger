@@ -46,16 +46,6 @@ typedef struct {
 void check_IP_buffer(char* IPbuffer);
 
 /**
- * Documentation here
- */
-void begin_keylogger(void);
-
-/**
- * Documentation here
- */
-void end_keylogger(void);
-
-/**
  * Logs the current device.
  *
  * @param key_package A pointer to a key_package instance. Used to hold all

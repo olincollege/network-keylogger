@@ -6,7 +6,8 @@
 #include "../src/keylogger.h"
 #include "../src/server_utils.h"
 
-// Test that reseting the key_package struct works.
+/* Tests that reseting the key_package struct works when there is one key
+present. */
 Test(reset_structs, check_single_key) {
   key_package pack;
   pack.keys_arr_size = 0;
@@ -20,6 +21,8 @@ Test(reset_structs, check_single_key) {
   cr_assert(eq(int, 0, package->keys_arr_size));
 }
 
+/* Tests that resetting the key_package struct works when there are multiple
+keys present. */
 Test(rest_structs, check_multiple_keys) {
   key_package pack;
   pack.keys_arr_size = 0;
