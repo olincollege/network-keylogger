@@ -24,9 +24,6 @@ Note that compiling programs that rely on this library requires special flags:
 Root permissions are necessary to access the keyboard events that the keylogger 
 utilizes. When compiling in the commandline, for example, when using GCC, the 
 executable must be run with sudo permissions: `sudo ./a.out`.
-And to access the keyboard events, you must have root permissions. If you're 
-compiling in the command line with something like GCC, you can run the 
-executable with sudo permissions: `sudo ./a.out`.
 
 However, when compiling iwth CMake, since sudo permissions cannot be specified,
 the user must be added to the input group by running the following in the terminal:
