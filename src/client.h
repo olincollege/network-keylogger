@@ -71,6 +71,18 @@ void try_connect(int client_socket, struct sockaddr_in server_addr);
 FILE* get_socket_file(int client_socket);
 
 /**
+ * Read all characters from a file as a string
+ *
+ * Given the path to a file, find the length of the string
+ * contained within that file, save it to a buffer, and return
+ * it to the user (note that this will need to be freed manually)
+ *
+ * @param filename a char* containing a path to a file
+ * @return A char* containing all of the text in that file
+ * **/
+char* read_file(const char* filename);
+
+/**
  * Attempts to send data to a given socket descriptor.
  *
  * @param socket_file   A file pointer corresponding to a client socket.
