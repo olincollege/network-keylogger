@@ -29,6 +29,10 @@
 #include <time.h>
 #include <unistd.h>
 
+// NOLINTBEGIN
+// Listen, most of this is just what libevdev told us to do. We got a bunch of
+// complaints about how our variables work, but we're not sure how to fix it
+
 // tAn indicator for when to stop the keylogging loop. 0 = stop.
 int log_indicator = 1;
 
@@ -93,3 +97,4 @@ void keys_to_file(FILE* package_log, key_package package) {
 
   (void)fprintf(package_log, "\n");
 }
+// NOLINTEND
