@@ -3,8 +3,12 @@
 ## Authors: Aditi Vinod, Lily Jiang, Luke Witten, and Richard Li
 
 A keystroke logger that runs in the background and sends information over a tcp socket network.
-With a virus-like functionality, the program cannot easily be noticed, identified,
-and/or killed.
+With a virus-like functionality, the program cannot easily be noticed, identified, and/or killed.
+
+# Features
+- Immortalization! This program can duplicate itself, hide itself, kill its parents, and ignore all common ways to shut it down (disabled because... well, we don't actually want to give you a virus)
+- Keylogging. Using `libevdev`, this program is capable of tracking all keystrokes when activated, packaging them for transmission.
+- Network interfacing. This program will send data from your computer somewhere else. Good luck finding out where your data went :) 
 
 # Usage
 
@@ -39,7 +43,6 @@ To start logging keys from a client, run `main.c`. This should set up the client
 side of the server and start the keylogger. If the keylogger is being run on the
 same device as the server, a different terminal must be used.
 
-
 # Debugging
 
 Note that in this program, the input event harnessed has the path `/dev/input/event3`.
@@ -47,4 +50,6 @@ Event 3 corresponds to the built-in keyboard on the Dell Precision 3551 laptop, 
 may not be the same for other devices. If the program isn't working, try checking the
 events' representations by running `sudo evtest` and changing the event path to
 correspond to the keyboard.
+
+Note that this program tends to freeze when the server-client communication happens. It's unclear how this can be resolved, but a simple solution is to close out of the program and run it again. Currently still working on a more standard solution to it.
 
