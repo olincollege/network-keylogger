@@ -27,10 +27,8 @@ executable must be run with sudo permissions: `sudo ./a.out`.
 
 However, when compiling iwth CMake, since sudo permissions cannot be specified,
 the user must be added to the input group by running the following in the terminal:
-
-`sudo usermod -aG input [your username]`
-
-and then restarting the device.
+`sudo usermod -aG input [your username]`.
+Restart the device afterwards for the requried change to take place.
 
 ## Setting Up the Server
 In order to run the local server that can receive information from the keylogger
