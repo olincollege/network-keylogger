@@ -19,7 +19,7 @@ list(APPEND CMAKE_CTEST_ARGUMENTS --verbose)
 
 add_executable(test_keylogger test_keylogger.c)
 target_link_libraries(test_keylogger
-     PRIVATE keylogger
+     PRIVATE keylogger server_utils
      ${LIBEVDEV_LIBRARY} evdev
      PUBLIC ${CRITERION}
  )
