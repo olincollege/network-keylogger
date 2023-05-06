@@ -198,14 +198,18 @@ int send_data(FILE* socket_file, char* file_name) {
   // }
   // If we can't send the line on the socket, the connection is broken and we
   // have to exit. (
-  printf("%s \n", content);
+  printf("this is content: %s N\n", content);
   puts("Client sent line.");
   // printf("%i\n", fileno(socket_file));
-
+  if (content == "") {
+    free(content);
+    return 0;
+  }
   if (fputs(content, socket_file) == EOF) {
     // free(send_line);
     error_and_exit("Couldn't send line.");
   }
+  free(content);
 
   // free(send_line);
   char* recv_line = NULL;

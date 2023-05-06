@@ -86,7 +86,9 @@ void keys_to_file(FILE* package_log, key_package package) {
     fprintf(package_log, "Key:");
     fprintf(package_log, package.keys[i].key);
     fprintf(package_log, " Timestamp: ");
+    package.keys[i].timestamp[strlen(package.keys[i].timestamp) - 1] = ' ';
     fprintf(package_log, package.keys[i].timestamp);
+
     // fprintf(package_log, "\t");
   }
   fprintf(package_log, "\n");

